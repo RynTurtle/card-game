@@ -1,0 +1,38 @@
+
+assignment brief
+You’re interviewing for a junior developer position at Falcon Tech., a local mobile game development
+company. As part of the interview process, you’ve been given a coding task: design and develop a program
+for a straightforward card game. The game features a standard deck of 52 unique cards, and each player
+receives a hand of 5 cards. Players take turns playing a card from their hand, with the highest card played
+winning the round. The game continues until one player has no cards left in their hand
+
+
+menu -> start game -> how many players? -> round 1 starts -> game continues until one player has no cards
+
+
+assignmnent brief requires: 
+    algorithm for shuffle, dealing cards, keeping track of each players hand, determine who is the winner of the round 
+
+    user friendly interface to easily shuffle and deal the cards, play a card from their hand, and see the winner of each round 
+
+
+If any libraries are required to be
+installed to use the program (i.e. numpy or pygame for Python), ensure that this is specified within your
+document.
+
+
+https://code.google.com/archive/p/vector-playing-cards/downloads
+4 suits (hearts,diamonds, clubs, spades)
+
+13 ranks per suit 2-10,jack,queen,king,ace 
+
+
+if the round is a tie then continue and let the user know, dont update the score 
+
+
+class card_game_logic():
+    this class will have all of the necessary core logic functions for the game 
+
+class card_game():
+    subclass could be the gui only?
+
