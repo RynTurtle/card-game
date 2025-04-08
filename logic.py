@@ -23,8 +23,10 @@ class card_game_logic():
      
     def add_player(self,player_name):
         if len(self.player_hands.keys()) == 5:
+            print("maximum player limit")
             return "maximum player limit reached"
         if player_name in self.player_hands:
+            print("player already added")
             return "player already added"
 
         self.player_hands[player_name] = {"cards":[]}
@@ -92,6 +94,7 @@ game.add_player("ryan")
 game.add_player("jeff")
 game.add_player("abc")
 game.add_player("def")
+game.add_player("ghi")
 game.add_player("ghi")
 
 game.shuffle_deck()
