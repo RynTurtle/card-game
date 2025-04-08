@@ -21,8 +21,6 @@ class card_game_logic():
         self.player_hands = {}
         self.deck = [] 
      
-
-
     def add_player(self,player_name):
         if len(self.player_hands.keys()) == 5:
             return "maximum player limit reached"
@@ -49,7 +47,7 @@ class card_game_logic():
         elif value in face_cards:
             return 10
         else:
-            return value 
+            return int(value) 
     
 
     def deal_hands(self):
@@ -59,19 +57,33 @@ class card_game_logic():
                 chosen_card = self.deck[0]
                 self.player_hands[players]["cards"].append(chosen_card)
                 self.deck.pop(0) # remove the card used 
-
+            
+    def check_winner(self):
+        highest_card = 0  
+        winner = ""
+        for player in self.player_hands:
+            player_card = self.player_hands[player]["cards"][0]
+            card_value = self.get_card_value(player_card)
+            print(f"{player}: {player_card}")
+            if card_value > highest_card:
+                highest_card = card_value
+                winner = player
+        
+        # check if the  "highest card" is also in the list with another player, then its a draw
+        for player in self.player_hands:
+            if self.get_card_value(self.player_hands[player]["cards"][0]) == highest_card and player != winner:
+                return "draw"
+        return winner
 
 game = card_game_logic()
 
 game.add_player("ryan")
 game.add_player("jeff")
-game.add_player("jeff")
+game.add_player("abc")
 
 game.shuffle_deck()
 game.deal_hands()
- 
-print(game.deck)
+print(game.check_winner())
 
 # check values of player cards, compare them, find winner 
-
 # add the 
