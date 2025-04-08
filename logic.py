@@ -51,7 +51,7 @@ class card_game_logic():
     
 
     def deal_hands(self):
-        # need to give a card 5 times to each player 
+        # distribute 5 cards to each player, one player at a time 
         for _ in range(5): 
             for players in self.player_hands:
                 chosen_card = self.deck[0]
@@ -62,6 +62,9 @@ class card_game_logic():
         highest_card = 0  
         winner = ""
         for player in self.player_hands:
+            if len(self.player_hands[player]["cards"]) == 0:
+                return "player has ran out of cards"
+            
             player_card = self.player_hands[player]["cards"][0]
             card_value = self.get_card_value(player_card)
             print(f"{player}: {player_card}")
@@ -73,17 +76,29 @@ class card_game_logic():
         for player in self.player_hands:
             if self.get_card_value(self.player_hands[player]["cards"][0]) == highest_card and player != winner:
                 return "draw"
+            
         return winner
+    
+    # remove the first card from the deck
+    def handle_move(self):
+        for player in self.player_hands:
+            if self.player_hands[player]["cards"]:
+                self.player_hands[player]["cards"].pop(0)
+
 
 game = card_game_logic()
 
 game.add_player("ryan")
 game.add_player("jeff")
 game.add_player("abc")
+game.add_player("def")
+game.add_player("ghi")
 
 game.shuffle_deck()
 game.deal_hands()
-print(game.check_winner())
+for i in range(6):
+    print(game.check_winner())
+    game.handle_move()
 
 # check values of player cards, compare them, find winner 
 # add the 
