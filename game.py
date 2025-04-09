@@ -4,9 +4,10 @@ pygame.init()
 display_info = pygame.display.Info()
 display_w = display_info.current_w
 display_h = display_info.current_h
+#display_w = 1920
+#display_h = 1080
 
 screen = pygame.display.set_mode((display_w,display_h),pygame.RESIZABLE)
-#screen = pygame.display.set_mode((1920,1080),pygame.RESIZABLE)
 
 clock = pygame.time.Clock()
 
@@ -30,7 +31,6 @@ def draw_card_placeholders():
     pygame.draw.rect(screen, "red", pygame.Rect((display_w / 2) - (card_width / 2) - padding - card_width, display_h - (card_height + padding), card_width, card_height), width=5) 
     pygame.draw.rect(screen, "red", pygame.Rect((display_w / 2) - (card_width / 2) - (padding *2) - (card_width*2), display_h - (card_height + padding), card_width, card_height), width=5) 
 
-# todo make it responsive using 0.10 for 10% instead 
 
 running = True
 while running:
