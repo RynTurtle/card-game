@@ -12,6 +12,7 @@ card_height = 250
 card_width = 200 
 padding = 50
 
+# todo make it responsive using 0.10 for 10% instead 
 
 running = True
 while running:
@@ -21,18 +22,29 @@ while running:
             running = False
 
 
+    # dark green background 
     screen.fill((0, 100, 0))
+
+    #draw white line in middle for reference 
     pygame.draw.line(screen, "white", (display_w /2, 0), (display_w / 2, display_info.current_h), width=2)
 
+
+
+
     #x,y,width,height,line width
+    # dealer rectangle 
+    pygame.draw.rect(screen, "red", pygame.Rect((display_w / 2) - (card_width / 2) , 100, card_width, card_height), width=5) 
+
     # place a card in the middle of the screen, height is the screens size - the card height with padding added
     pygame.draw.rect(screen, "red", pygame.Rect((display_w / 2) - (card_width / 2) , display_h - (card_height + padding), card_width, card_height), width=5) 
     
     # right of the middle 
     pygame.draw.rect(screen, "red", pygame.Rect((display_w / 2) - (card_width / 2) + padding + card_width, display_h - (card_height + padding), card_width, card_height), width=5) 
- 
+    pygame.draw.rect(screen, "red", pygame.Rect((display_w / 2) - (card_width / 2) + (padding *2) + (card_width*2), display_h - (card_height + padding), card_width, card_height), width=5) 
+
     # left of the middle 
     pygame.draw.rect(screen, "red", pygame.Rect((display_w / 2) - (card_width / 2) - padding - card_width, display_h - (card_height + padding), card_width, card_height), width=5) 
+    pygame.draw.rect(screen, "red", pygame.Rect((display_w / 2) - (card_width / 2) - (padding *2) - (card_width*2), display_h - (card_height + padding), card_width, card_height), width=5) 
 
     # update game 
     pygame.display.flip()
