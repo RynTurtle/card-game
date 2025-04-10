@@ -20,7 +20,7 @@ class card_game_logic():
     def __init__(self):
         self.player_hands = {}
         self.deck = [] 
-     
+        
     def add_player(self,player_name):
         if len(self.player_hands.keys()) == 5:
             print("maximum player limit")
@@ -32,14 +32,19 @@ class card_game_logic():
         self.player_hands[player_name] = {"cards":[]}
         return f"added {player_name}"
 
-
+ 
     # shuffle a new deck of cards
     def shuffle_deck(self):
-        cards = os.listdir("./images/cards")
-        random.shuffle(cards)   
-        for card in cards:
-            self.deck.append(card.replace(".png",""))
-        
+        if self.deck == []:
+            cards = os.listdir("./images/cards")
+            random.shuffle(cards)   
+            for card in cards:
+                self.deck.append(card.replace(".png",""))
+            print("deck shuffled")
+        else:
+            print("deck has already been shuffled ")
+
+
     def get_card_value(self,card):
         # card name must be formatted like the card image list 
         face_cards = ["jack","king","queen"]
@@ -54,6 +59,7 @@ class card_game_logic():
 
     def deal_hands(self):
         # distribute 5 cards to each player, one player at a time 
+        
         for _ in range(5): 
             for players in self.player_hands:
                 chosen_card = self.deck[0]
