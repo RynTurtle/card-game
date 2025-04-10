@@ -87,8 +87,10 @@ class card_game_logic():
             if self.player_hands[player]["cards"]:
                 self.player_hands[player]["cards"].pop(0)
 
+    def get_players(self):
+        return list(self.player_hands.keys())
 
-game = card_game_logic()
+"""game = card_game_logic()
 
 game.add_player("ryan")
 game.add_player("jeff")
@@ -101,7 +103,7 @@ game.shuffle_deck()
 game.deal_hands()
 for i in range(6):
     print(game.check_winner())
-    game.handle_move()
+    game.handle_move()"""
 
 # check values of player cards, compare them, find winner 
 # add the 
