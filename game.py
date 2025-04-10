@@ -82,6 +82,7 @@ class card_game(card_game_logic):
                 players_card = self.player_hands[self.get_players()[i]]["cards"][0]
                 if value: # a number was pressed 
                     print(f"{self.get_players()[i]},{players_card}")
+                    # is there another way to do this? loading images constantly seems bad practice 
                     card = pygame.image.load(f'./images/cards/{players_card}.png')
                     card = pygame.transform.scale(card, (self.card_width,self.card_height ))
 
