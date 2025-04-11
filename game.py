@@ -7,14 +7,16 @@ class card_game(card_game_logic):
         super().__init__() # initializes the logic class 
 
         pygame.init()
+        self.font = pygame.font.SysFont(None,24)
         display_info = pygame.display.Info()
         #display_w = display_info.current_w
         #display_h = display_info.current_h
         self.display_w = 1920
         self.display_h = 1080
-
+        
         #fullscreen
         self.screen = pygame.display.set_mode((self.display_w,self.display_h))
+        
         self.card_height = 250
         self.card_width = 200 
         self.padding = 50
@@ -76,7 +78,6 @@ class card_game(card_game_logic):
                 self.screen.blit(self.card_back, (self.positions[j][0] - i, self.positions[j][1] - i))        
     
     def flip_card(self):
-
         for i,value in enumerate(self.flipped): 
             if i < len(self.get_players()): # if the card has a player allocated
                 players_card = self.player_hands[self.get_players()[i]]["cards"][0]
@@ -89,6 +90,15 @@ class card_game(card_game_logic):
                     self.screen.blit(card,(self.positions[i][0],self.positions[i][1]))
 
 
+    def write_players(self):
+        for i,value in enumerate(self.flipped): 
+            if i < len(self.get_players()): # if the card has a player allocated
+                player = self.get_players()[i]
+                x = self.positions[i][0] 
+                y = self.positions[i][1] - 20  #  add padding to ontop of the card
+                text_image = self.font.render(player,True,(0,0,0))
+                self.screen.blit(text_image,(x,y))
+
     def draw(self):
         self.screen.fill((0, 100, 0))
         #draw white line in middle for reference 
@@ -96,6 +106,7 @@ class card_game(card_game_logic):
         self.card_placeholders()
         if self.place_card:
             self.place_cards()
+            self.write_players()
             self.flip_card()
 
 
