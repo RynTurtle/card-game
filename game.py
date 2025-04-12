@@ -2,7 +2,10 @@ import pygame
 from logic import card_game_logic 
 
 
+#class game_menu():
 
+
+#class game_popups():
 
 
 
@@ -114,17 +117,6 @@ class card_game(card_game_logic):
             self.write_players()
             self.flip_card()
 
-
-        if self.flipped.count(True) >= len(self.get_players()): # if the player cards have been flipped
-            # update the winning player
-            if self.updated_score == False:
-                player = self.check_winner()
-                if player == "draw":
-                    print("draw")
-                else:
-                    self.update_score(player) 
-                    self.updated_score = True 
-
                 
 
     def game_loop(self):
@@ -142,16 +134,17 @@ class card_game(card_game_logic):
                         #deal cards 
                         self.deal_cards = True 
 
-                    if event.key == pygame.K_1:
-                        self.flipped[0] = True 
-                    if event.key == pygame.K_2:
-                        self.flipped[1] = True 
-                    if event.key == pygame.K_3:
-                        self.flipped[2] = True 
-                    if event.key == pygame.K_4:
-                        self.flipped[3] = True 
-                    if event.key == pygame.K_5:
-                        self.flipped[4] = True 
+                    if self.deal_cards: # only flip cards if they are dealt
+                        if event.key == pygame.K_1:
+                            self.flipped[0] = True 
+                        if event.key == pygame.K_2:
+                            self.flipped[1] = True 
+                        if event.key == pygame.K_3:
+                            self.flipped[2] = True 
+                        if event.key == pygame.K_4:
+                            self.flipped[3] = True 
+                        if event.key == pygame.K_5:
+                            self.flipped[4] = True 
 
                     if event.key == pygame.K_f:
                         print("finish")
@@ -160,8 +153,19 @@ class card_game(card_game_logic):
                         # set the cards to default 
                         self.flipped = [False,False,False,False,False]
                         self.updated_score = False 
-                         
+                        self.deal_cards = False
+
             self.draw()
+            if self.flipped.count(True) >= len(self.get_players()): # if the player cards have been flipped
+                # update the winning player
+                if self.updated_score == False:
+                    player = self.check_winner()
+                    if player == "draw":
+                        print("draw")
+                    else:
+                        self.update_score(player) 
+                        self.updated_score = True 
+            
             # update game 
             pygame.display.flip()
             # fps
