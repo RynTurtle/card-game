@@ -76,7 +76,9 @@ class card_game(card_game_logic):
         text_image = self.font.render(text,True,(0,0,0))
         self.screen.blit(text_image,(x,y))
 
-    def game_end(self):
+    
+    # need to make game_end, grabs the person with the most wins and prompts to start the next game. 
+    def round_end(self):
         print("game ended")
         winner = self.check_winner()
         if winner == "draw":
@@ -102,7 +104,7 @@ class card_game(card_game_logic):
                     flipped +=1 
 
         if flipped == len(self.get_players()):
-            self.game_end()
+            self.round_end()
             print("all cards flipped ")
             self.flipped = [False,False,False,False,False]
 
