@@ -1,7 +1,11 @@
 import pygame 
 from logic import card_game_logic 
 
- 
+
+
+
+
+
 class card_game(card_game_logic):
     def __init__(self):
         super().__init__() # initializes the logic class 
@@ -41,7 +45,7 @@ class card_game(card_game_logic):
         self.shuffle_deck()
         self.deal_hands()
     
-
+        self.updated_score = False 
 
     def card_outlines(self):
         #x,y,width,height,line width
@@ -77,19 +81,9 @@ class card_game(card_game_logic):
         self.screen.blit(text_image,(x,y))
 
     
-    # need to make game_end, grabs the person with the most wins and prompts to start the next game. 
-    def round_end(self):
-        print("game ended")
-        winner = self.check_winner()
-        if winner == "draw":
-            print("draw!")
-        else:
-            print(f"winner: {winner}")
-        self.handle_round()
-
+ 
     
     def flip_card(self):
-        flipped = 0
         for i,value in enumerate(self.flipped): 
             if i < len(self.get_players()): # if the card has a player allocated
                 players_card = self.player_hands[self.get_players()[i]]["cards"][0]
@@ -98,14 +92,7 @@ class card_game(card_game_logic):
                     card = pygame.image.load(f'./images/cards/{players_card}.png')
                     card = pygame.transform.scale(card, (self.card_width,self.card_height ))
                     self.screen.blit(card,(self.positions[i][0],self.positions[i][1]))
-
-                    flipped +=1 
-
-        if flipped == len(self.get_players()):
-            self.round_end()
-            print("all cards flipped ")
-            self.flipped = [False,False,False,False,False]
-
+        
     def write_players(self):
         for i,value in enumerate(self.flipped): 
             if i < len(self.get_players()): # if the card has a player allocated
@@ -127,7 +114,18 @@ class card_game(card_game_logic):
             self.write_players()
             self.flip_card()
 
-    
+
+        if self.flipped.count(True) >= len(self.get_players()): # if the player cards have been flipped
+            # update the winning player
+            if self.updated_score == False:
+                player = self.check_winner()
+                if player == "draw":
+                    print("draw")
+                else:
+                    self.update_score(player) 
+                    self.updated_score = True 
+
+                
 
     def game_loop(self):
         running = True
@@ -155,7 +153,13 @@ class card_game(card_game_logic):
                     if event.key == pygame.K_5:
                         self.flipped[4] = True 
 
-
+                    if event.key == pygame.K_f:
+                        print("finish")
+                        # finish round 
+                        self.handle_round()
+                        # set the cards to default 
+                        self.flipped = [False,False,False,False,False]
+                        self.updated_score = False 
                          
             self.draw()
             # update game 
