@@ -64,7 +64,10 @@ class card_game_logic():
                 chosen_card = self.deck[0]
                 self.player_hands[players]["cards"].append(chosen_card)
                 self.deck.pop(0) # remove the card used 
-            
+    
+    def update_score(self,player):
+        self.player_hands[player]["wins"] += 1 
+
     def check_winner(self):
         highest_card = 0  
         winner = ""
@@ -84,7 +87,6 @@ class card_game_logic():
             if self.get_card_value(self.player_hands[player]["cards"][0]) == highest_card and player != winner:
                 return "draw"
             
-        self.player_hands[winner]["wins"] += 1 
         return winner
     
     # remove the first card from the deck
