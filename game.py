@@ -85,9 +85,7 @@ class card_game(card_game_logic):
             print("draw!")
         else:
             print(f"winner: {winner}")
-        self.handle_move()
-
-        # rewrite the text   
+        self.handle_round()
 
     
     def flip_card(self):

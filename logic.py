@@ -88,7 +88,7 @@ class card_game_logic():
         return winner
     
     # remove the first card from the deck
-    def handle_move(self):
+    def handle_round(self):
         for player in self.player_hands:
             if self.player_hands[player]["cards"]:
                 self.player_hands[player]["cards"].pop(0)
