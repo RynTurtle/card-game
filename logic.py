@@ -29,10 +29,9 @@ class card_game_logic():
             print("player already added")
             return "player already added"
 
-        self.player_hands[player_name] = {"cards":[]}
+        self.player_hands[player_name] = {"cards":[],"wins":0}
         return f"added {player_name}"
 
- 
     # shuffle a new deck of cards
     def shuffle_deck(self):
         if self.deck == []:
@@ -75,16 +74,17 @@ class card_game_logic():
             
             player_card = self.player_hands[player]["cards"][0]
             card_value = self.get_card_value(player_card)
-            print(f"{player}: {player_card}")
+            #print(f"{player}: {player_card}")
             if card_value > highest_card:
                 highest_card = card_value
                 winner = player
-        
+                
         # check if the  "highest card" is also in the list with another player, then its a draw
         for player in self.player_hands:
             if self.get_card_value(self.player_hands[player]["cards"][0]) == highest_card and player != winner:
                 return "draw"
             
+        self.player_hands[winner]["wins"] += 1 
         return winner
     
     # remove the first card from the deck

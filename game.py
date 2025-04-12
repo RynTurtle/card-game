@@ -9,8 +9,8 @@ class card_game(card_game_logic):
         pygame.init()
         self.font = pygame.font.SysFont(None,24)
         display_info = pygame.display.Info()
-        #display_w = display_info.current_w
-        #display_h = display_info.current_h
+        #self.display_w = display_info.current_w
+        #self.display_h = display_info.current_h
         self.display_w = 1920
         self.display_h = 1080
         
@@ -32,9 +32,8 @@ class card_game(card_game_logic):
         # poistions left to right, players left to right 
         self.card_back = pygame.image.load('./images/card-back.png')
         self.card_back = pygame.transform.scale(self.card_back, (self.card_width,self.card_height ))
-        self.place_card = False
+        self.deal_cards = False
         self.flipped = [False,False,False,False,False]
-
         # maybe add a newgame function which does this part, getting the names of players 
         self.add_player("ryan")
         self.add_player("jeff")
@@ -42,14 +41,12 @@ class card_game(card_game_logic):
         self.shuffle_deck()
         self.deal_hands()
     
-        
 
 
-    def card_placeholders(self):
+    def card_outlines(self):
         #x,y,width,height,line width
         # dealer rectangle
         pygame.draw.rect(self.screen, "red", pygame.Rect(self.dealer[0],self.dealer[1], self.card_width, self.card_height), width=5) 
-        self.place_dealer_stack()
         # place a card in the middle of the screen, the height is the screens size - the card height with padding added
         pygame.draw.rect(self.screen, "red", pygame.Rect(self.mid[0],self.mid[1], self.card_width, self.card_height), width=5) 
         
@@ -73,22 +70,41 @@ class card_game(card_game_logic):
         for i in range(5): # 5 cards per player 
             for j,player in enumerate(self.get_players()):
                 # place the card from left to right through the positions in self.positions, stack them by offset card through i  
-                
-                
                 self.screen.blit(self.card_back, (self.positions[j][0] - i, self.positions[j][1] - i))        
     
+    def write_text(self,text,x,y):
+        text_image = self.font.render(text,True,(0,0,0))
+        self.screen.blit(text_image,(x,y))
+
+    def game_end(self):
+        print("game ended")
+        winner = self.check_winner()
+        if winner == "draw":
+            print("draw!")
+        else:
+            print(f"winner: {winner}")
+        self.handle_move()
+
+        # rewrite the text   
+
+    
     def flip_card(self):
+        flipped = 0
         for i,value in enumerate(self.flipped): 
             if i < len(self.get_players()): # if the card has a player allocated
                 players_card = self.player_hands[self.get_players()[i]]["cards"][0]
-                if value: # a number was pressed 
-                    print(f"{self.get_players()[i]},{players_card}")
-                    # is there another way to do this? loading images constantly seems bad practice 
+                if value: # the card is wanted to be flipped  
+                    #print(f"{self.get_players()[i]},{players_card}")
                     card = pygame.image.load(f'./images/cards/{players_card}.png')
                     card = pygame.transform.scale(card, (self.card_width,self.card_height ))
-
                     self.screen.blit(card,(self.positions[i][0],self.positions[i][1]))
 
+                    flipped +=1 
+
+        if flipped == len(self.get_players()):
+            self.game_end()
+            print("all cards flipped ")
+            self.flipped = [False,False,False,False,False]
 
     def write_players(self):
         for i,value in enumerate(self.flipped): 
@@ -96,19 +112,22 @@ class card_game(card_game_logic):
                 player = self.get_players()[i]
                 x = self.positions[i][0] 
                 y = self.positions[i][1] - 20  #  add padding to ontop of the card
-                text_image = self.font.render(player,True,(0,0,0))
-                self.screen.blit(text_image,(x,y))
+                self.write_text(f"player: {player} wins: {self.player_hands[player]["wins"]}",x,y)
+
 
     def draw(self):
         self.screen.fill((0, 100, 0))
         #draw white line in middle for reference 
         pygame.draw.line(self.screen, "white", (self.display_w /2, 0), (self.display_w / 2, self.display_h), width=2)
-        self.card_placeholders()
-        if self.place_card:
+        self.card_outlines()
+        self.place_dealer_stack()
+
+        if self.deal_cards:
             self.place_cards()
             self.write_players()
             self.flip_card()
 
+    
 
     def game_loop(self):
         running = True
@@ -123,7 +142,7 @@ class card_game(card_game_logic):
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_d:
                         #deal cards 
-                        self.place_card = True 
+                        self.deal_cards = True 
 
                     if event.key == pygame.K_1:
                         self.flipped[0] = True 
@@ -135,6 +154,7 @@ class card_game(card_game_logic):
                         self.flipped[3] = True 
                     if event.key == pygame.K_5:
                         self.flipped[4] = True 
+
 
                          
             self.draw()
