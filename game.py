@@ -12,7 +12,7 @@ from logic import card_game_logic
 # start game popup 
 # enter no. of players 
 # enter player names
-#popup for draws 
+
 
 # when one player has no cards
 # do you want to restart? Y/N buttons 
@@ -25,46 +25,71 @@ from logic import card_game_logic
 # controls button top left 
 
 
-class card_game(card_game_logic):
-    def __init__(self):
-        super().__init__() # initializes the logic class 
 
-        pygame.init()
-        self.font = pygame.font.SysFont(None,24) # default font 
-        display_info = pygame.display.Info()
-        #self.display_w = display_info.current_w
-        #self.display_h = display_info.current_h
+class Button():
+    # image,position,size
+    def __init__():
+        pass 
+
+
+# this class starts, gets players and will run the game when wanted 
+class game_menu():
+    # to use multiple screens, add multiple game loops where they clear the screen 
+    
+    def __init__(self):
         self.display_w = 1920
         self.display_h = 1080
-        
         #fullscreen
+        #display_info = pygame.display.Info()
         self.screen = pygame.display.set_mode((self.display_w,self.display_h))
-        
+        pygame.init()
+
+    def main_menu(self):
+        # enter to start game 
+        while True:
+            self.screen.fill("black")
+            
+            # handle events 
+            pygame.display.update()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:  
+                    pygame.quit()
+
+
+    def player_screen():
+        # gets the players and inserts them into the player_hands variable 
+        pass 
+
+
+    def game_winner():
+        # player has won the game! continue? Y/N  or draw! continue? Y/N 
+        pass 
+
+
+class card_game(card_game_logic):
+    def __init__(self):
+        super().__init__() # initializes the subclasses  
+        self.font = pygame.font.SysFont(None,24) # default font 
+
         self.card_height = 250
         self.card_width = 200 
-        self.padding = 50
-        
+        self.padding = 50        
         self.dealer = pygame.Vector2((self.display_w / 2) - (self.card_width / 2), 100) 
         self.mid = pygame.Vector2((self.display_w / 2) - (self.card_width / 2) , self.display_h - (self.card_height + self.padding))
         self.right = pygame.Vector2((self.display_w / 2) - (self.card_width / 2) + self.padding + self.card_width, self.display_h - (self.card_height + self.padding))
         self.right2 = pygame.Vector2((self.display_w / 2) - (self.card_width / 2) + (self.padding *2) + (self.card_width*2), self.display_h - (self.card_height + self.padding))
         self.left = pygame.Vector2((self.display_w / 2) - (self.card_width / 2) - self.padding - self.card_width, self.display_h - (self.card_height + self.padding))
         self.left2 = pygame.Vector2((self.display_w / 2) - (self.card_width / 2) - (self.padding *2) - (self.card_width*2), self.display_h - (self.card_height + self.padding))
-
-        self.positions = [self.left2,self.left,self.mid,self.right,self.right2]
         # poistions left to right, players left to right 
+        self.positions = [self.left2,self.left,self.mid,self.right,self.right2]
+        
         self.card_back = pygame.image.load('./images/card-back.png')
         self.card_back = pygame.transform.scale(self.card_back, (self.card_width,self.card_height ))
+
         self.deal_cards = False
         self.updated_score = False 
         self.flipped = [False,False,False,False,False]
-        # maybe add a newgame function which does this part, getting the names of players 
-        self.add_player("ryan")
-        self.add_player("jeff")
-        self.add_player("abc")
-        self.shuffle_deck()
-        self.deal_hands()
-        self.continue_game = True
+        self.continue_game = True   # player has no cards in their hand or they chose to exit 
 
     def card_outlines(self):
         #x,y,width,height,line width
@@ -138,12 +163,12 @@ class card_game(card_game_logic):
 
     def game_loop(self):
         clock = pygame.time.Clock()
- 
         while self.continue_game:
+
             # poll for events
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: # user wants to quit
-                    running = False
+                    self.continue_game = False
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_d:
@@ -176,9 +201,7 @@ class card_game(card_game_logic):
                 # update the winning player
                 if self.updated_score == False:
                     player = self.check_winner()
-                    if player == "draw":
-                        print("draw")
-                    else:
+                    if player != "draw":
                         self.update_score(player) 
                         self.updated_score = True 
             
@@ -194,4 +217,5 @@ class card_game(card_game_logic):
 
 
 
-card_game().game_loop()
+menu =  game_menu()
+menu.main_menu()
