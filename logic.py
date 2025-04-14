@@ -29,7 +29,7 @@ class card_game_logic():
             print("player already added")
             return "player already added"
 
-        self.player_hands[player_name] = {"cards":[],"wins":0}
+        self.player_hands[player_name] = {"cards":[],"wins":0} # maybe wins:{1:5,2:2,3:4} # round:wins 
         return f"added {player_name}"
 
     # shuffle a new deck of cards
@@ -65,6 +65,12 @@ class card_game_logic():
                 self.player_hands[players]["cards"].append(chosen_card)
                 self.deck.pop(0) # remove the card used 
     
+    def has_empty_hand(self):
+        for players in self.get_players():
+            if  self.player_hands[players]["cards"] == []:
+                return True  
+
+
     def update_score(self,player):
         self.player_hands[player]["wins"] += 1 
 

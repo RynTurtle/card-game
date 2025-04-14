@@ -8,13 +8,29 @@ from logic import card_game_logic
 #class game_popups():
 
 
+# need to do:
+# start game popup 
+# enter no. of players 
+# enter player names
+#popup for draws 
+
+# when one player has no cards
+# do you want to restart? Y/N buttons 
+
+
+
+# if enough time: 
+# click card to reveal instead of numbers
+# show dealer cards being stacked in an animation with a satisfying sound 
+# controls button top left 
+
 
 class card_game(card_game_logic):
     def __init__(self):
         super().__init__() # initializes the logic class 
 
         pygame.init()
-        self.font = pygame.font.SysFont(None,24)
+        self.font = pygame.font.SysFont(None,24) # default font 
         display_info = pygame.display.Info()
         #self.display_w = display_info.current_w
         #self.display_h = display_info.current_h
@@ -40,6 +56,7 @@ class card_game(card_game_logic):
         self.card_back = pygame.image.load('./images/card-back.png')
         self.card_back = pygame.transform.scale(self.card_back, (self.card_width,self.card_height ))
         self.deal_cards = False
+        self.updated_score = False 
         self.flipped = [False,False,False,False,False]
         # maybe add a newgame function which does this part, getting the names of players 
         self.add_player("ryan")
@@ -47,8 +64,7 @@ class card_game(card_game_logic):
         self.add_player("abc")
         self.shuffle_deck()
         self.deal_hands()
-    
-        self.updated_score = False 
+        self.continue_game = True
 
     def card_outlines(self):
         #x,y,width,height,line width
@@ -95,7 +111,8 @@ class card_game(card_game_logic):
                     card = pygame.image.load(f'./images/cards/{players_card}.png')
                     card = pygame.transform.scale(card, (self.card_width,self.card_height ))
                     self.screen.blit(card,(self.positions[i][0],self.positions[i][1]))
-        
+    
+
     def write_players(self):
         for i,value in enumerate(self.flipped): 
             if i < len(self.get_players()): # if the card has a player allocated
@@ -120,10 +137,9 @@ class card_game(card_game_logic):
                 
 
     def game_loop(self):
-        running = True
         clock = pygame.time.Clock()
  
-        while running:
+        while self.continue_game:
             # poll for events
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: # user wants to quit
@@ -166,6 +182,9 @@ class card_game(card_game_logic):
                         self.update_score(player) 
                         self.updated_score = True 
             
+            if self.has_empty_hand():
+                self.continue_game = False 
+
             # update game 
             pygame.display.flip()
             # fps
