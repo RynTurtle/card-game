@@ -28,11 +28,37 @@ from logic import card_game_logic
 
 class Button():
     # image,position,size
-    def __init__():
-        pass 
+    def __init__(self,screen,image_file,x,y,scale = 1.0):
+        self.screen = screen
+        self.button_image = pygame.image.load(f"./images/{image_file}").convert_alpha() # convert alpha makes sure transparency is preserved 
+        width = self.button_image.get_width()
+        height = self.button_image.get_height()
+
+        width = int(width * scale)
+        height = int(height * scale)
+        self.button_image = pygame.transform.smoothscale(self.button_image,(width,height)) # create the new button with the scaled width/height 
+        self.rect = self.button_image.get_rect(center=(x,y)) # enclose image in rectangle, center it in the x,y coords
+       
+        self.clicked = False # allow only one click being registered 
+
+    def draw(self):
+        self.screen.blit(self.button_image,self.rect)
+
+    def is_pressed(self):
+        position = pygame.mouse.get_pos()
+        pressed = pygame.mouse.get_pressed()[0] # bool 
+        if self.rect.collidepoint(position): # if the mouse is in the area of the rectangle button 
+            if pressed and not self.clicked:
+                self.clicked = True 
+                return True
+            
+        if not pressed:
+            self.clicked = False 
+            return False 
 
 
-# this class starts, gets players and will run the game when wanted 
+        return False 
+
 class game_menu():
     # to use multiple screens, add multiple game loops where they clear the screen 
     
@@ -46,23 +72,48 @@ class game_menu():
 
     def main_menu(self):
         # enter to start game 
+        sx = self.display_w / 2
+        sy = self.display_h / 2 
+        cx = self.display_h / 2 - 50
+        cy = self.display_w / 2 - 50
+        start_button = Button(self.screen,"start-button.png",sx,sy,1)
         while True:
-            self.screen.fill("black")
-            
             # handle events 
             pygame.display.update()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:  
                     pygame.quit()
 
+            if start_button.is_pressed():
+                print("start pressed")
+            
+            self.screen.fill("black")
+            start_button.draw()
 
-    def player_screen():
+            #if controls.is_pressed():
+            #    print("controls has been clicked")
+
+
+    def player_screen(self):
         # gets the players and inserts them into the player_hands variable 
-        pass 
+        print("player screen")
+        # start the card game, give it the screen to write over  
+        while True:
+            self.screen.fill("purple")
+            
+            # handle events 
+            pygame.display.update()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:  
+                    pygame.quit()
+                
+                if event.type == pygame.KEYDOWN:
+                    # user pressed enter or space to start the game 
+                    pass
 
-
-    def game_winner():
-        # player has won the game! continue? Y/N  or draw! continue? Y/N 
+        
+    def game_end():
+        # game has ended, player won/draw,  continue? Y/N 
         pass 
 
 
