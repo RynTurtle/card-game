@@ -162,7 +162,7 @@ class card_game(card_game_logic):
         self.flipped = [False,False,False,False,False]
         self.continue_game = True   # player has no cards in their hand or they chose to exit 
         for i in range(players_chosen):
-            self.add_player(f"player {i}")
+            self.add_player(f"player {i+1}")
         self.shuffle_deck()
         self.deal_hands()
 
