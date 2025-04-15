@@ -42,6 +42,8 @@ class Button():
         self.clicked = False # allow only one click being registered 
 
     def draw(self):
+        # if its clicked then draw the clicked alternative button png?
+        # if its hovered over then draw a highlight or something over the button 
         self.screen.blit(self.button_image,self.rect)
 
     def is_pressed(self):
@@ -55,14 +57,14 @@ class Button():
         if not pressed:
             self.clicked = False 
             return False 
-
-
         return False 
 
 class game_menu():
     # to use multiple screens, add multiple game loops where they clear the screen 
     
     def __init__(self):
+        super().__init__() # initializes the subclasses  
+
         self.display_w = 1920
         self.display_h = 1080
         #fullscreen
@@ -86,6 +88,7 @@ class game_menu():
 
             if start_button.is_pressed():
                 print("start pressed")
+                self.player_screen()
             
             self.screen.fill("black")
             start_button.draw()
@@ -98,18 +101,33 @@ class game_menu():
         # gets the players and inserts them into the player_hands variable 
         print("player screen")
         # start the card game, give it the screen to write over  
-        while True:
-            self.screen.fill("purple")
-            
+        x = self.display_w / 2 
+        y = self.display_h / 2 
+        two = Button(self.screen,"2.png",x,y + 200 ,0.2)
+        three = Button(self.screen,"3.png",x,y + 300,0.2)
+        four = Button(self.screen,"4.png",x,y + 400,0.2)
+        five = Button(self.screen,"5.png",x,y + 500,0.2)
+        
+        btns = [two,three,four,five] 
+        while True:            
             # handle events 
             pygame.display.update()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:  
                     pygame.quit()
-                
-                if event.type == pygame.KEYDOWN:
-                    # user pressed enter or space to start the game 
-                    pass
+            
+            for i in range(4):
+                if btns[i].is_pressed():
+                    #print(f"{i+2} players")
+                    players_chosen = i+2 
+                    # start game 
+                    card_game(players_chosen,self.screen,self.display_w,self.display_h).game_loop()
+                    return  # go back to the main menu when card game is exited
+
+            self.screen.fill("purple")
+            # draw all the buttons 
+            for b in btns:
+                b.draw()
 
         
     def game_end():
@@ -118,10 +136,12 @@ class game_menu():
 
 
 class card_game(card_game_logic):
-    def __init__(self):
+    def __init__(self,players_chosen, screen,display_w,display_h):
         super().__init__() # initializes the subclasses  
+        self.screen = screen
+        self.display_w = display_w
+        self.display_h = display_h
         self.font = pygame.font.SysFont(None,24) # default font 
-
         self.card_height = 250
         self.card_width = 200 
         self.padding = 50        
@@ -141,6 +161,10 @@ class card_game(card_game_logic):
         self.updated_score = False 
         self.flipped = [False,False,False,False,False]
         self.continue_game = True   # player has no cards in their hand or they chose to exit 
+        for i in range(players_chosen):
+            self.add_player(f"player {i}")
+        self.shuffle_deck()
+        self.deal_hands()
 
     def card_outlines(self):
         #x,y,width,height,line width
@@ -166,7 +190,7 @@ class card_game(card_game_logic):
 
     def place_cards(self):
         # add player name and winning info, would be cool if animated 
-        for i in range(5): # 5 cards per player 
+        for i in range(5): # 5 cards per player             
             for j,player in enumerate(self.get_players()):
                 # place the card from left to right through the positions in self.positions, stack them by offset card through i  
                 self.screen.blit(self.card_back, (self.positions[j][0] - i, self.positions[j][1] - i))        
@@ -205,6 +229,7 @@ class card_game(card_game_logic):
         self.card_outlines()
         self.place_dealer_stack()
 
+        
         if self.deal_cards:
             self.place_cards()
             self.write_players()
@@ -218,8 +243,9 @@ class card_game(card_game_logic):
 
             # poll for events
             for event in pygame.event.get():
-                if event.type == pygame.QUIT: # user wants to quit
-                    self.continue_game = False
+                if event.type == pygame.QUIT: # user clicked x on game 
+                    pygame.quit() # exit the program 
+
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_d:
@@ -256,16 +282,14 @@ class card_game(card_game_logic):
                         self.update_score(player) 
                         self.updated_score = True 
             
-            if self.has_empty_hand():
-                self.continue_game = False 
-
+            if self.has_empty_hand(): # player has empty hand 
+                self.continue_game = False  # end game loop and exit to menu 
             # update game 
             pygame.display.flip()
             # fps
             clock.tick(60)  
 
-        pygame.quit()
-
+        #pygame.quit()
 
 
 menu =  game_menu()
