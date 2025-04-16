@@ -26,6 +26,7 @@ from logic import card_game_logic
 
 class Button():
     # image,position,size
+    # bug: when buttons overlap on different screens it will click them both 
     def __init__(self,screen,image_file,x,y,scale = 1.0):
         self.screen = screen
         self.button_image = pygame.image.load(f"./images/{image_file}").convert_alpha() # convert alpha makes sure transparency is preserved 
@@ -65,11 +66,15 @@ class game_menu():
         self.display_w = 1920
         self.display_h = 1080
         #fullscreen
-        #display_info = pygame.display.Info()
+        display_info = pygame.display.Info()
+        #self.display_w = display_info.current_w
+        #self.display_h = display_info.current_h
         self.screen = pygame.display.set_mode((self.display_w,self.display_h))
         self.main_menu_image = pygame.image.load(f"./images/main-menu.png")
         self.main_menu_image = pygame.transform.smoothscale(self.main_menu_image,(self.display_w,self.display_h)) # resize image to fit display
-        self.font = pygame.font.SysFont(None,24) # default font 
+        self.font = pygame.font.SysFont(None,200)  
+
+
 
     def main_menu(self):
         # enter to start game 
@@ -100,12 +105,12 @@ class game_menu():
         # gets the players and inserts them into the player_hands variable 
         print("player screen")
         # start the card game, give it the screen to write over  
-        x = self.display_w / 2 
-        y = self.display_h / 2 
-        two = Button(self.screen,"2.png",x,y + 200 ,0.2)
-        three = Button(self.screen,"3.png",x,y + 300,0.2)
-        four = Button(self.screen,"4.png",x,y + 400,0.2)
-        five = Button(self.screen,"5.png",x,y + 500,0.2)
+        x = self.display_w / 2 - 350
+        y = self.display_h / 2 + 100
+        two = Button(self.screen,"2.png",x + 200,y ,0.2)
+        three = Button(self.screen,"3.png",x + 300,y,0.2)
+        four = Button(self.screen,"4.png",x + 400,y,0.2)
+        five = Button(self.screen,"5.png",x + 500 ,y,0.2)
         
         btns = [two,three,four,five] 
         while True:            
@@ -122,8 +127,11 @@ class game_menu():
                     # start game 
                     card_game(players_chosen,self.screen,self.display_w,self.display_h).game_loop()
                     return  # go back to the main menu when card game is exited
-
+                
             self.screen.fill((0, 100, 0))
+            pygame.draw.line(self.screen, "white", (self.display_w /2, 0), (self.display_w / 2, self.display_h), width=2)
+            text_image = self.font.render("How many players?",True,(0,0,0))
+            self.screen.blit(text_image,(self.display_w / 4.5,self.display_h / 5))
             # draw all the buttons 
             for b in btns:
                 b.draw()
