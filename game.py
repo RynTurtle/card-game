@@ -9,8 +9,6 @@ from logic import card_game_logic
 
 
 # need to do:
-# start game popup 
-# enter no. of players 
 # enter player names
 
 
@@ -63,14 +61,15 @@ class game_menu():
     # to use multiple screens, add multiple game loops where they clear the screen 
     
     def __init__(self):
-        super().__init__() # initializes the subclasses  
-
+        pygame.init()
         self.display_w = 1920
         self.display_h = 1080
         #fullscreen
         #display_info = pygame.display.Info()
         self.screen = pygame.display.set_mode((self.display_w,self.display_h))
-        pygame.init()
+        self.main_menu_image = pygame.image.load(f"./images/main-menu.png")
+        self.main_menu_image = pygame.transform.smoothscale(self.main_menu_image,(self.display_w,self.display_h)) # resize image to fit display
+        self.font = pygame.font.SysFont(None,24) # default font 
 
     def main_menu(self):
         # enter to start game 
@@ -90,7 +89,7 @@ class game_menu():
                 print("start pressed")
                 self.player_screen()
             
-            self.screen.fill("black")
+            self.screen.blit(self.main_menu_image,(0,0))
             start_button.draw()
 
             #if controls.is_pressed():
@@ -124,7 +123,7 @@ class game_menu():
                     card_game(players_chosen,self.screen,self.display_w,self.display_h).game_loop()
                     return  # go back to the main menu when card game is exited
 
-            self.screen.fill("purple")
+            self.screen.fill((0, 100, 0))
             # draw all the buttons 
             for b in btns:
                 b.draw()
