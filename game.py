@@ -74,8 +74,8 @@ class game_menu():
         self.screen = pygame.display.set_mode((self.display_w,self.display_h))
         self.main_menu_image = pygame.image.load(f"./images/main-menu.png")
         self.main_menu_image = pygame.transform.smoothscale(self.main_menu_image,(self.display_w,self.display_h)) # resize image to fit display
-        self.font = pygame.font.SysFont(None,200)  
-
+        self.big_font = pygame.font.SysFont(None,200)  
+        self.font = pygame.font.SysFont(None,60)  
 
 
     def main_menu(self):
@@ -125,22 +125,32 @@ class game_menu():
             for i in range(4):
                 if btns[i].is_pressed():
                     #print(f"{i+2} players")
-                    players_chosen = i+2 
+                    self.players_chosen = i+2 
                     # start game 
-                    card_game(players_chosen,self.screen,self.display_w,self.display_h).game_loop()
+                    card_game(self.players_chosen,self.screen,self.display_w,self.display_h).game_loop()
                     return  # go back to the main menu when card game is exited
-                
+        
             self.screen.fill((0, 100, 0))
             #pygame.draw.line(self.screen, "white", (self.display_w /2, 0), (self.display_w / 2, self.display_h), width=2)
-            text_image = self.font.render("How many players?",True,(0,0,0))
+            text_image = self.big_font.render("How many players?",True,(0,0,0))
             self.screen.blit(text_image,(self.display_w / 4.5,self.display_h / 5))
             # draw all the buttons 
             for b in btns:
                 b.draw()
 
         
-    def game_end(self):
+    def game_end(self,winner):
         # game has ended, player won/draw,  continue? Y/N 
+        y = Button(self.screen,"y.png", self.display_w / 2  - 50,self.display_h / 2,0.2)
+        n = Button(self.screen,"n.png", self.display_w / 2  + 50,self.display_h / 2,0.2)
+        if winner == "draw":
+            message = f"It was a draw!"
+        else:
+            message = f"Congratulations {winner}, you have won!!!"
+
+        congrats = self.font.render(message,True,(0,0,0))
+        restart = self.font.render("Would you like to restart?",True,(0,0,0))
+
         while True:
             # handle events 
             pygame.display.update()
@@ -148,7 +158,21 @@ class game_menu():
                 if event.type == pygame.QUIT:  
                     pygame.quit()
 
-            self.screen.fill((0, 0, 0))
+            if y.is_pressed():
+                self.player_screen()
+                print("y")
+
+            if n.is_pressed():
+                print("n")
+                return 
+            
+            self.screen.fill((0, 100, 0))
+            pygame.draw.line(self.screen, "white", (self.display_w /2, 0), (self.display_w / 2, self.display_h), width=2)
+        
+            y.draw()
+            self.screen.blit(restart,(0,self.display_h / 3))
+            self.screen.blit(congrats,(0,self.display_h / 3 - 50))
+            n.draw() 
 
 class card_game(card_game_logic):
     def __init__(self,players_chosen, screen,display_w,display_h):
@@ -292,14 +316,15 @@ class card_game(card_game_logic):
             if self.flipped.count(True) >= len(self.get_players()): # if the player cards have been flipped
                 # update the winning player
                 if self.updated_score == False:
-                    player = self.check_winner()
+                    player = self.round_winner()
                     if player != "draw":
                         self.update_score(player) 
                         self.updated_score = True 
             
             if self.has_empty_hand(): # player has empty hand 
                 self.continue_game = False  # end game loop 
-                game_menu().game_end()
+                # get the final winner of all 5 rounds, pass it into the game end screen 
+                game_menu().game_end(self.game_winner())
 
             # update game 
             pygame.display.flip()

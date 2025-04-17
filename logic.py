@@ -74,7 +74,7 @@ class card_game_logic():
     def update_score(self,player):
         self.player_hands[player]["wins"] += 1 
 
-    def check_winner(self):
+    def round_winner(self):
         highest_card = 0  
         winner = ""
         for player in self.player_hands:
@@ -92,9 +92,22 @@ class card_game_logic():
         for player in self.player_hands:
             if self.get_card_value(self.player_hands[player]["cards"][0]) == highest_card and player != winner:
                 return "draw"
-            
         return winner
     
+    def game_winner(self):
+
+        winner = ""
+        amount = 0
+        for players in self.player_hands:    
+            print(f"{players} {self.player_hands[players]["wins"]}")
+            if  self.player_hands[players]["wins"] > amount:
+                amount = self.player_hands[players]["wins"]
+                winner = players    
+        for players in self.player_hands:
+            if self.player_hands[players]["wins"] == amount and players != winner:
+                return "draw"
+        return winner
+
     # remove the first card from the deck
     def handle_round(self):
         for player in self.player_hands:
