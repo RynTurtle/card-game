@@ -58,6 +58,8 @@ class Button():
             return False 
         return False 
 
+
+# main menu => players => game => game end => replay? Y => game; N => main menu 
 class game_menu():
     # to use multiple screens, add multiple game loops where they clear the screen 
     
@@ -129,7 +131,7 @@ class game_menu():
                     return  # go back to the main menu when card game is exited
                 
             self.screen.fill((0, 100, 0))
-            pygame.draw.line(self.screen, "white", (self.display_w /2, 0), (self.display_w / 2, self.display_h), width=2)
+            #pygame.draw.line(self.screen, "white", (self.display_w /2, 0), (self.display_w / 2, self.display_h), width=2)
             text_image = self.font.render("How many players?",True,(0,0,0))
             self.screen.blit(text_image,(self.display_w / 4.5,self.display_h / 5))
             # draw all the buttons 
@@ -137,10 +139,16 @@ class game_menu():
                 b.draw()
 
         
-    def game_end():
+    def game_end(self):
         # game has ended, player won/draw,  continue? Y/N 
-        pass 
+        while True:
+            # handle events 
+            pygame.display.update()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:  
+                    pygame.quit()
 
+            self.screen.fill((0, 0, 0))
 
 class card_game(card_game_logic):
     def __init__(self,players_chosen, screen,display_w,display_h):
@@ -290,7 +298,9 @@ class card_game(card_game_logic):
                         self.updated_score = True 
             
             if self.has_empty_hand(): # player has empty hand 
-                self.continue_game = False  # end game loop and exit to menu 
+                self.continue_game = False  # end game loop 
+                game_menu().game_end()
+
             # update game 
             pygame.display.flip()
             # fps
