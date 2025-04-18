@@ -12,7 +12,7 @@ from logic import card_game_logic
 
 class Button():
     # image,position,size
-    # bug: when buttons overlap on different screens it will click them both 
+    # bug: when buttons overlap on different screens it will click them both, for now i will just avoid overlap 
     def __init__(self,screen,image_file,x,y,scale = 1.0):
         self.screen = screen
         self.button_image = pygame.image.load(f"./images/{image_file}").convert_alpha() # convert alpha makes sure transparency is preserved 
@@ -66,11 +66,12 @@ class game_menu():
 
     def main_menu(self):
         # enter to start game 
-        sx = self.display_w / 2
-        sy = self.display_h / 2 
-        cx = self.display_h / 2 - 50
-        cy = self.display_w / 2 - 50
-        start_button = Button(self.screen,"start-button.png",sx,sy,1)
+        x = self.display_w / 2
+        y = self.display_h / 2 
+
+        start_button = Button(self.screen,"start.png",x,y,1)
+        guide = Button(self.screen,"guide.png",x,y + 150,1)
+
         while True:
             # handle events 
             pygame.display.update()
@@ -81,10 +82,13 @@ class game_menu():
             if start_button.is_pressed():
                 print("start pressed")
                 self.player_screen()
-            
+
+            if guide.is_pressed():
+                self.guide()
+
             self.screen.blit(self.main_menu_image,(0,0))
             start_button.draw()
-
+            guide.draw()
             #if controls.is_pressed():
             #    print("controls has been clicked")
 
@@ -124,7 +128,27 @@ class game_menu():
             for b in btns:
                 b.draw()
 
-        
+    def guide(self):
+        x = self.display_w / 2 
+        y = self.display_h 
+        return_button = Button(self.screen,"ok.png",x,y - 150,1)
+        welcome = "Welcome to High Five!"
+        howtoplay = "Each player has five cards, After each player card is drawn a winner is determined, the player with the most wins after wins the game"
+        controls = "Click shuffle to randomise the player cards, click deal to distribute the cards then  click on the cards to reveal their values"
+        while True:
+            # handle events 
+            pygame.display.update()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:  
+                    pygame.quit()
+            
+            if return_button.is_pressed():
+                return 
+            
+            self.screen.fill((0, 100, 0))
+            return_button.draw()
+
+
     def game_end(self,winner):
         # game has ended, player won/draw,  continue? Y/N 
         y = Button(self.screen,"y.png", self.display_w / 2  - 50,self.display_h / 2,0.2)
@@ -159,6 +183,8 @@ class game_menu():
             self.screen.blit(restart,(0,self.display_h / 3))
             self.screen.blit(congrats,(0,self.display_h / 3 - 50))
             n.draw() 
+    
+
 
 class card_game(card_game_logic):
     def __init__(self,players_chosen, screen,display_w,display_h):
@@ -186,8 +212,11 @@ class card_game(card_game_logic):
         self.updated_score = False 
         self.flipped = [False,False,False,False,False]
         self.continue_game = True   # player has no cards in their hand or they chose to exit 
+        self.shuffle_button = Button(self.screen,"shuffle.png",self.display_w / 2, self.card_height + 125,0.5)
+        self.deal_button = Button(self.screen, "deal.png",self.display_w / 2,self.card_height  + 180 ,0.5) 
         for i in range(players_chosen):
             self.add_player(f"player {i+1}")
+        
         self.shuffle_deck()
         self.deal_hands()
 
@@ -254,7 +283,8 @@ class card_game(card_game_logic):
         self.card_outlines()
         self.place_dealer_stack()
 
-        
+        self.shuffle_button.draw()
+        self.deal_button.draw()
         if self.deal_cards:
             self.place_cards()
             self.write_players()
@@ -273,10 +303,6 @@ class card_game(card_game_logic):
 
 
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_d:
-                        #deal cards 
-                        self.deal_cards = True 
-
                     if self.deal_cards: # only flip cards if they are dealt
                         if event.key == pygame.K_1:
                             self.flipped[0] = True 
@@ -297,6 +323,15 @@ class card_game(card_game_logic):
                         self.flipped = [False,False,False,False,False]
                         self.updated_score = False 
                         self.deal_cards = False
+
+            if self.deal_button.is_pressed():
+                print("deal")
+                # deal the cards  to each player 
+                self.deal_cards = True 
+
+            if self.shuffle_button.is_pressed():
+                print("shuffle")
+                 
 
             self.draw()
             if self.flipped.count(True) >= len(self.get_players()): # if the player cards have been flipped
