@@ -2,27 +2,13 @@ import pygame
 from logic import card_game_logic 
 
 
-#class game_menu():
-
-
-#class game_popups():
-
-
-# need to do:
-# enter player names
-
-
-# when one player has no cards
-# do you want to restart? Y/N buttons 
-
-
-
 # if enough time: 
 # click card to reveal instead of numbers
 # show dealer cards being stacked in an animation with a satisfying sound 
-# controls button top left 
 
-
+# shuffle button (shuffles the cards only once, after use make it unable to click again)
+# deal button 
+# guide - main menu + top left corner of game (how to play the game) - how the game works, what the controls are 
 
 class Button():
     # image,position,size
