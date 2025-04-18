@@ -194,17 +194,17 @@ class card_game(card_game_logic):
     def card_outlines(self):
         #x,y,width,height,line width
         # dealer rectangle
-        pygame.draw.rect(self.screen, "red", pygame.Rect(self.dealer[0],self.dealer[1], self.card_width, self.card_height), width=5) 
+        pygame.draw.rect(self.screen, "gold", pygame.Rect(self.dealer[0],self.dealer[1], self.card_width, self.card_height), width=5) 
         # place a card in the middle of the screen, the height is the screens size - the card height with padding added
-        pygame.draw.rect(self.screen, "red", pygame.Rect(self.mid[0],self.mid[1], self.card_width, self.card_height), width=5) 
+        pygame.draw.rect(self.screen, "gold", pygame.Rect(self.mid[0],self.mid[1], self.card_width, self.card_height), width=5) 
         
         # right of the middle 
-        pygame.draw.rect(self.screen, "red", pygame.Rect(self.right[0],self.right[1], self.card_width, self.card_height), width=5) 
-        pygame.draw.rect(self.screen, "red", pygame.Rect(self.right2[0],self.right2[1], self.card_width,self.card_height), width=5) 
+        pygame.draw.rect(self.screen, "gold", pygame.Rect(self.right[0],self.right[1], self.card_width, self.card_height), width=5) 
+        pygame.draw.rect(self.screen, "gold", pygame.Rect(self.right2[0],self.right2[1], self.card_width,self.card_height), width=5) 
 
         # left of the middle 
-        pygame.draw.rect(self.screen, "red", pygame.Rect(self.left[0],self.left[1], self.card_width, self.card_height), width=5) 
-        pygame.draw.rect(self.screen, "red", pygame.Rect(self.left2[0],self.left2[1],self.card_width, self.card_height), width=5) 
+        pygame.draw.rect(self.screen, "gold", pygame.Rect(self.left[0],self.left[1], self.card_width, self.card_height), width=5) 
+        pygame.draw.rect(self.screen, "gold", pygame.Rect(self.left2[0],self.left2[1],self.card_width, self.card_height), width=5) 
 
 
 
