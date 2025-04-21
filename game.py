@@ -8,8 +8,7 @@ from logic import card_game_logic
 
 # shuffle button (shuffles the cards only once, after use make it unable to click again)
 # deal button 
-# guide - main menu + top left corner of game (how to play the game) - how the game works, what the controls are 
-
+# next button? continue to next round
 class Button():
     # image,position,size
     # bug: when buttons overlap on different screens it will click them both, for now i will just avoid overlap 
@@ -128,6 +127,7 @@ class game_menu():
             for b in btns:
                 b.draw()
 
+
     def guide(self):
         x = self.display_w / 2 
         y = self.display_h 
@@ -204,7 +204,6 @@ class card_game(card_game_logic):
         self.left2 = pygame.Vector2((self.display_w / 2) - (self.card_width / 2) - (self.padding *2) - (self.card_width*2), self.display_h - (self.card_height + self.padding))
         # poistions left to right, players left to right 
         self.positions = [self.left2,self.left,self.mid,self.right,self.right2]
-        
         self.card_back = pygame.image.load('./images/card-back.png')
         self.card_back = pygame.transform.scale(self.card_back, (self.card_width,self.card_height ))
 
@@ -243,7 +242,6 @@ class card_game(card_game_logic):
             self.screen.blit(self.card_back, (self.dealer[0] - i,self.dealer[1] - i)) # place cards with offset of 1 on each axis
 
     def place_cards(self):
-        # add player name and winning info, would be cool if animated 
         for i in range(5): # 5 cards per player             
             for j,player in enumerate(self.get_players()):
                 # place the card from left to right through the positions in self.positions, stack them by offset card through i  
@@ -315,13 +313,12 @@ class card_game(card_game_logic):
                         if event.key == pygame.K_5:
                             self.flipped[4] = True 
 
-                    if event.key == pygame.K_f:
-                        print("finish")
+                    if event.key == pygame.K_SPACE:
                         # finish round 
                         self.handle_round()
                         # set the cards to default 
                         self.flipped = [False,False,False,False,False]
-                        self.updated_score = False 
+                        #self.updated_score = False 
                         self.deal_cards = False
 
             if self.deal_button.is_pressed():
@@ -331,10 +328,14 @@ class card_game(card_game_logic):
 
             if self.shuffle_button.is_pressed():
                 print("shuffle")
-                 
-
+                
             self.draw()
-            if self.flipped.count(True) >= len(self.get_players()): # if the player cards have been flipped
+
+            # if the player cards have been flipped, alert the user to press space to continue and update the score only once 
+            if self.flipped.count(True) >= len(self.get_players()): 
+                text_image = self.font.render("Press space to continue",True,(0,0,0))
+                self.screen.blit(text_image,(self.display_w / 2 - 100,self.display_h / 2))
+                    
                 # update the winning player
                 if self.updated_score == False:
                     player = self.round_winner()
