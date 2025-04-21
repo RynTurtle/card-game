@@ -20,7 +20,8 @@ class card_game_logic():
     def __init__(self):
         self.player_hands = {}
         self.deck = [] 
-        
+        self.round = 1 
+
     def add_player(self,player_name):
         if len(self.player_hands.keys()) == 5:
             print("maximum player limit")
@@ -58,13 +59,15 @@ class card_game_logic():
 
     def deal_hands(self):
         # distribute 5 cards to each player, one player at a time 
-        
         for _ in range(5): 
             for players in self.player_hands:
-                chosen_card = self.deck[0]
-                self.player_hands[players]["cards"].append(chosen_card)
-                self.deck.pop(0) # remove the card used 
+                if len(self.player_hands[players]["cards"]) < 5: 
+                    chosen_card = self.deck[0]
+                    self.player_hands[players]["cards"].append(chosen_card)
+                    self.deck.pop(0) # remove the card used from the main deck  
     
+
+
     def has_empty_hand(self):
         for players in self.get_players():
             if  self.player_hands[players]["cards"] == []:
@@ -113,6 +116,7 @@ class card_game_logic():
         for player in self.player_hands:
             if self.player_hands[player]["cards"]:
                 self.player_hands[player]["cards"].pop(0)
+        self.round +=1 
 
     def get_players(self):
         return list(self.player_hands.keys())

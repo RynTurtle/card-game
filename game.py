@@ -215,9 +215,6 @@ class card_game(card_game_logic):
         self.deal_button = Button(self.screen, "deal.png",self.display_w / 2,self.card_height  + 180 ,0.5) 
         for i in range(players_chosen):
             self.add_player(f"player {i+1}")
-        
-        self.shuffle_deck()
-        self.deal_hands()
 
     def card_outlines(self):
         #x,y,width,height,line width
@@ -321,13 +318,18 @@ class card_game(card_game_logic):
                         #self.updated_score = False 
                         self.deal_cards = False
 
-            if self.deal_button.is_pressed():
-                print("deal")
-                # deal the cards  to each player 
-                self.deal_cards = True 
 
-            if self.shuffle_button.is_pressed():
+            # deal cards when the button is pressed and when the cards have been shuffled 
+            if self.deal_button.is_pressed() and len(self.deck) != 0:
+                print("deal")
+                # now the dealer will move the cards facedown for the player to flip  
+                self.deal_cards = True  
+
+            # shuffling can only be done when the game starts 
+            if self.shuffle_button.is_pressed() and self.deal_cards == False and self.round == 1:
                 print("shuffle")
+                self.shuffle_deck()
+                self.deal_hands() # deal the shuffled hands  
                 
             self.draw()
 
@@ -343,7 +345,8 @@ class card_game(card_game_logic):
                         self.update_score(player) 
                         self.updated_score = True 
             
-            if self.has_empty_hand(): # player has empty hand 
+            # player has empty hand 
+            if self.has_empty_hand() and self.round != 1 : 
                 self.continue_game = False  # end game loop 
                 # get the final winner of all 5 rounds, pass it into the game end screen 
                 game_menu().game_end(self.game_winner())
