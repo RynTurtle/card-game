@@ -215,6 +215,7 @@ class card_game(card_game_logic):
         self.deal_button = Button(self.screen, "deal.png",self.display_w / 2,self.card_height  + 180 ,0.5) 
         for i in range(players_chosen):
             self.add_player(f"player {i+1}")
+        self.guide = Button(self.screen,"guide.png",100,40,0.7)
 
     def card_outlines(self):
         #x,y,width,height,line width
@@ -277,7 +278,8 @@ class card_game(card_game_logic):
         pygame.draw.line(self.screen, "white", (self.display_w /2, 0), (self.display_w / 2, self.display_h), width=2)
         self.card_outlines()
         self.place_dealer_stack()
-
+        
+        self.guide.draw()
         self.shuffle_button.draw()
         self.deal_button.draw()
         if self.deal_cards:
@@ -330,7 +332,11 @@ class card_game(card_game_logic):
                 print("shuffle")
                 self.shuffle_deck()
                 self.deal_hands() # deal the shuffled hands  
-                
+
+            if self.guide.is_pressed():
+                game_menu().guide()
+
+
             self.draw()
 
             # if the player cards have been flipped, alert the user to press space to continue and update the score only once 
