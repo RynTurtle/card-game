@@ -5,10 +5,10 @@ from logic import card_game_logic
 # if enough time: 
 # click card to reveal instead of numbers
 # show dealer cards being stacked in an animation with a satisfying sound 
+# when shuffle and deal buttons are locked, use alternative image with grey instead of gold
 
-# shuffle button (shuffles the cards only once, after use make it unable to click again)
-# deal button 
-# next button? continue to next round
+
+
 class Button():
     # image,position,size
     # bug: when buttons overlap on different screens it will click them both, for now i will just avoid overlap 
@@ -134,7 +134,7 @@ class game_menu():
         return_button = Button(self.screen,"ok.png",x,y - 150,1)
         welcome = "Welcome to High Five!"
         howtoplay = "Each player has five cards, After each player card is drawn a winner is determined, the player with the most wins after wins the game"
-        controls = "Click shuffle to randomise the player cards, click deal to distribute the cards then  click on the cards to reveal their values"
+        controls = "Click shuffle to randomise the player cards, click deal to distribute the cards then click on the cards to reveal their values"
         while True:
             # handle events 
             pygame.display.update()
@@ -213,6 +213,14 @@ class card_game(card_game_logic):
         self.continue_game = True   # player has no cards in their hand or they chose to exit 
         self.shuffle_button = Button(self.screen,"shuffle.png",self.display_w / 2, self.card_height + 125,0.5)
         self.deal_button = Button(self.screen, "deal.png",self.display_w / 2,self.card_height  + 180 ,0.5) 
+
+
+        width = pygame.image.load("./images/card-back.png").get_width()
+        scale =  self.card_width  / width
+
+        self.test = Button(self.screen,"card-back.png",self.display_w / 2, self.display_h - (self.card_height - self.padding) , scale  )
+        
+
         for i in range(players_chosen):
             self.add_player(f"player {i+1}")
         self.guide = Button(self.screen,"guide.png",100,40,0.7)
@@ -278,7 +286,7 @@ class card_game(card_game_logic):
         pygame.draw.line(self.screen, "white", (self.display_w /2, 0), (self.display_w / 2, self.display_h), width=2)
         self.card_outlines()
         self.place_dealer_stack()
-        
+        self.test.draw()
         self.guide.draw()
         self.shuffle_button.draw()
         self.deal_button.draw()
@@ -336,6 +344,8 @@ class card_game(card_game_logic):
             if self.guide.is_pressed():
                 game_menu().guide()
 
+            if self.test.is_pressed():
+                print("test")
 
             self.draw()
 
