@@ -200,8 +200,8 @@ class card_game(card_game_logic):
         self.card_width = 200 
         self.padding = 50        
         self.dealer = pygame.Vector2((self.display_w / 2) - (self.card_width / 2), 100) 
+        
         self.positions = []
-
         # 5 cards, padding inbetween these cards 
         total_width = self.card_width * 5 + self.padding * 4
         #  get the amount of space left after placing cards, divide it equally in half so you can get the starts spacing 
@@ -229,15 +229,16 @@ class card_game(card_game_logic):
         self.continue_game = True   # player has no cards in their hand or they chose to exit 
         self.shuffle_button = Button(self.screen,"shuffle.png",self.display_w / 2, self.card_height + 125,0.5)
         self.deal_button = Button(self.screen, "deal.png",self.display_w / 2,self.card_height  + 180 ,0.5) 
-
-
-        #t = self.display_w / 2 
-        #t2 = self.display_h - (self.card_width - 20)
-
+        
         # need to pass the buttons a center instead of top left, to do this add the half of the card its missing 
         center_h = self.card_height / 2
         center_w = self.card_width / 2  
-        self.test = Button(self.screen,"card-back.png",self.mid[0] + center_w,self.mid[1] + center_h, width=self.card_width,height=self.card_height)
+        self.left2_button = Button(self.screen,"card-back.png",self.left2[0] + center_w,self.left2[1] + center_h, width=self.card_width,height=self.card_height)
+        self.left_button = Button(self.screen,"card-back.png",self.left[0] + center_w,self.left[1] + center_h, width=self.card_width,height=self.card_height)
+        self.mid_button = Button(self.screen,"card-back.png",self.mid[0] + center_w,self.mid[1] + center_h, width=self.card_width,height=self.card_height)
+        self.right_button = Button(self.screen,"card-back.png",self.right[0] + center_w,self.right[1] + center_h, width=self.card_width,height=self.card_height)
+        self.right2_button = Button(self.screen,"card-back.png",self.right2[0] + center_w,self.right2[1] + center_h, width=self.card_width,height=self.card_height)
+        self.card_buttons =  [self.left2_button,self.left_button,self.mid_button,self.right_button,self.right2_button]
         #print(f"new x:{t} y{t2}")
 
 
@@ -278,8 +279,34 @@ class card_game(card_game_logic):
         self.screen.blit(text_image,(x,y))
 
     
- 
-    
+    def place_card_buttons(self):
+        for i,player in enumerate(self.get_players()):
+            # draw the button card related to the player 
+            self.card_buttons[i].draw()
+            
+    def handle_buttons(self):
+        for i,buttons in enumerate(self.card_buttons):
+            if buttons.is_pressed() and self.deal_cards:
+                # only flip cards if they are dealt
+                self.flipped[i] = True  
+
+
+        # deal cards when the button is pressed and when the cards have been shuffled 
+        if self.deal_button.is_pressed() and len(self.deck) != 0:
+            print("deal")
+            # now the dealer will move the cards facedown for the player to flip  
+            self.deal_cards = True  
+
+        # shuffling can only be done when the game starts 
+        if self.shuffle_button.is_pressed() and self.deal_cards == False and self.round == 1:
+            print("shuffle")
+            self.shuffle_deck()
+            self.deal_hands() # deal the shuffled hands  
+
+        if self.guide.is_pressed():
+            game_menu().guide()
+
+
     def flip_card(self):
         for i,value in enumerate(self.flipped): 
             if i < len(self.get_players()): # if the card has a player allocated
@@ -306,11 +333,13 @@ class card_game(card_game_logic):
         pygame.draw.line(self.screen, "white", (self.display_w /2, 0), (self.display_w / 2, self.display_h), width=2)
         self.card_outlines()
         self.place_dealer_stack()
-        self.test.draw()
+        #self.test.draw()
         self.guide.draw()
         self.shuffle_button.draw()
         self.deal_button.draw()
         if self.deal_cards:
+            # place the buttons underneath the cards 
+            self.place_card_buttons() 
             self.place_cards()
             self.write_players()
             self.flip_card()
@@ -328,18 +357,6 @@ class card_game(card_game_logic):
 
 
                 if event.type == pygame.KEYDOWN:
-                    if self.deal_cards: # only flip cards if they are dealt
-                        if event.key == pygame.K_1:
-                            self.flipped[0] = True 
-                        if event.key == pygame.K_2:
-                            self.flipped[1] = True 
-                        if event.key == pygame.K_3:
-                            self.flipped[2] = True 
-                        if event.key == pygame.K_4:
-                            self.flipped[3] = True 
-                        if event.key == pygame.K_5:
-                            self.flipped[4] = True 
-
                     if event.key == pygame.K_SPACE:
                         # finish round 
                         self.handle_round()
@@ -348,25 +365,7 @@ class card_game(card_game_logic):
                         #self.updated_score = False 
                         self.deal_cards = False
 
-
-            # deal cards when the button is pressed and when the cards have been shuffled 
-            if self.deal_button.is_pressed() and len(self.deck) != 0:
-                print("deal")
-                # now the dealer will move the cards facedown for the player to flip  
-                self.deal_cards = True  
-
-            # shuffling can only be done when the game starts 
-            if self.shuffle_button.is_pressed() and self.deal_cards == False and self.round == 1:
-                print("shuffle")
-                self.shuffle_deck()
-                self.deal_hands() # deal the shuffled hands  
-
-            if self.guide.is_pressed():
-                game_menu().guide()
-
-            if self.test.is_pressed():
-                print("test")
-
+            self.handle_buttons()
             self.draw()
 
             # if the player cards have been flipped, alert the user to press space to continue and update the score only once 
