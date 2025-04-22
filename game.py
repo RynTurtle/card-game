@@ -12,14 +12,17 @@ from logic import card_game_logic
 class Button():
     # image,position,size
     # bug: when buttons overlap on different screens it will click them both, for now i will just avoid overlap 
-    def __init__(self,screen,image_file,x,y,scale = 1.0):
+    def __init__(self,screen,image_file,x,y,scale = None,width=0,height=0):
         self.screen = screen
-        self.button_image = pygame.image.load(f"./images/{image_file}").convert_alpha() # convert alpha makes sure transparency is preserved 
-        width = self.button_image.get_width()
-        height = self.button_image.get_height()
 
-        width = int(width * scale)
-        height = int(height * scale)
+        self.button_image = pygame.image.load(f"./images/{image_file}").convert_alpha() # convert alpha makes sure transparency is preserved 
+        if scale != None:
+            width = self.button_image.get_width()
+            height = self.button_image.get_height()
+            width = int(width * scale)
+            height = int(height * scale)
+        
+
         self.button_image = pygame.transform.smoothscale(self.button_image,(width,height)) # create the new button with the scaled width/height 
         self.rect = self.button_image.get_rect(center=(x,y)) # enclose image in rectangle, center it in the x,y coords
        
@@ -197,13 +200,26 @@ class card_game(card_game_logic):
         self.card_width = 200 
         self.padding = 50        
         self.dealer = pygame.Vector2((self.display_w / 2) - (self.card_width / 2), 100) 
-        self.mid = pygame.Vector2((self.display_w / 2) - (self.card_width / 2) , self.display_h - (self.card_height + self.padding))
-        self.right = pygame.Vector2((self.display_w / 2) - (self.card_width / 2) + self.padding + self.card_width, self.display_h - (self.card_height + self.padding))
-        self.right2 = pygame.Vector2((self.display_w / 2) - (self.card_width / 2) + (self.padding *2) + (self.card_width*2), self.display_h - (self.card_height + self.padding))
-        self.left = pygame.Vector2((self.display_w / 2) - (self.card_width / 2) - self.padding - self.card_width, self.display_h - (self.card_height + self.padding))
-        self.left2 = pygame.Vector2((self.display_w / 2) - (self.card_width / 2) - (self.padding *2) - (self.card_width*2), self.display_h - (self.card_height + self.padding))
-        # poistions left to right, players left to right 
-        self.positions = [self.left2,self.left,self.mid,self.right,self.right2]
+        self.positions = []
+
+        # 5 cards, padding inbetween these cards 
+        total_width = self.card_width * 5 + self.padding * 4
+        #  get the amount of space left after placing cards, divide it equally in half so you can get the starts spacing 
+        start_x = (self.display_w - total_width) / 2
+        # height is the card height + padding 
+
+        y = self.display_h - (self.card_height + self.padding)
+        for i in range(5):
+            # calculate next card by starting far left, then add the card # and * by the cards and their padding 
+            x = start_x + i * (self.card_width + self.padding)
+            self.positions.append(pygame.Vector2(x,y))
+        #pygame draws these objects from the top left corner 
+        self.left2 = self.positions[0]
+        self.left = self.positions[1]
+        self.mid = self.positions[2]
+        self.right = self.positions[3]
+        self.right2 = self.positions[4]
+ 
         self.card_back = pygame.image.load('./images/card-back.png')
         self.card_back = pygame.transform.scale(self.card_back, (self.card_width,self.card_height ))
 
@@ -215,11 +231,15 @@ class card_game(card_game_logic):
         self.deal_button = Button(self.screen, "deal.png",self.display_w / 2,self.card_height  + 180 ,0.5) 
 
 
-        width = pygame.image.load("./images/card-back.png").get_width()
-        scale =  self.card_width  / width
+        #t = self.display_w / 2 
+        #t2 = self.display_h - (self.card_width - 20)
 
-        self.test = Button(self.screen,"card-back.png",self.display_w / 2, self.display_h - (self.card_height - self.padding) , scale  )
-        
+        # need to pass the buttons a center instead of top left, to do this add the half of the card its missing 
+        center_h = self.card_height / 2
+        center_w = self.card_width / 2  
+        self.test = Button(self.screen,"card-back.png",self.mid[0] + center_w,self.mid[1] + center_h, width=self.card_width,height=self.card_height)
+        #print(f"new x:{t} y{t2}")
+
 
         for i in range(players_chosen):
             self.add_player(f"player {i+1}")
