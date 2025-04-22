@@ -362,7 +362,7 @@ class card_game(card_game_logic):
                         self.handle_round()
                         # set the cards to default 
                         self.flipped = [False,False,False,False,False]
-                        #self.updated_score = False 
+                        self.updated_score = False 
                         self.deal_cards = False
 
             self.handle_buttons()
@@ -370,16 +370,16 @@ class card_game(card_game_logic):
 
             # if the player cards have been flipped, alert the user to press space to continue and update the score only once 
             if self.flipped.count(True) >= len(self.get_players()): 
-                text_image = self.font.render("Press space to continue",True,(0,0,0))
-                self.screen.blit(text_image,(self.display_w / 2 - 100,self.display_h / 2))
-                    
                 # update the winning player
                 if self.updated_score == False:
                     player = self.round_winner()
                     if player != "draw":
                         self.update_score(player) 
                         self.updated_score = True 
-            
+                
+                text_image = self.font.render("Press space to continue",True,(0,0,0))
+                self.screen.blit(text_image,(self.display_w / 2 - 100,self.display_h / 2))
+                    
             # player has empty hand 
             if self.has_empty_hand() and self.round != 1 : 
                 self.continue_game = False  # end game loop 
