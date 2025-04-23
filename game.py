@@ -2,13 +2,7 @@ import pygame
 from logic import card_game_logic 
 
 
-# if enough time: 
-# click card to reveal instead of numbers
-# show dealer cards being stacked in an animation with a satisfying sound 
 # when shuffle and deal buttons are locked, use alternative image with grey instead of gold
-
-
-
 class Button():
     # image,position,size
     # bug: when buttons overlap on different screens it will click them both, for now i will just avoid overlap 
@@ -324,7 +318,7 @@ class card_game(card_game_logic):
                 player = self.get_players()[i]
                 x = self.positions[i][0] 
                 y = self.positions[i][1] - 20  #  add padding to ontop of the card
-                self.write_text(f"player: {player} wins: {self.player_hands[player]["wins"]}",x,y)
+                self.write_text(f"{player} wins: {self.player_hands[player]["wins"]}",x,y)
 
 
     def draw(self):
@@ -357,8 +351,8 @@ class card_game(card_game_logic):
 
 
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        # finish round 
+                    if event.key == pygame.K_SPACE and self.flipped.count(True) >= len(self.get_players()):
+                        # finish round only when players have flipped their cards
                         self.handle_round()
                         # set the cards to default 
                         self.flipped = [False,False,False,False,False]
@@ -370,10 +364,13 @@ class card_game(card_game_logic):
 
             # if the player cards have been flipped, alert the user to press space to continue and update the score only once 
             if self.flipped.count(True) >= len(self.get_players()): 
+                #print("player cards flipped")
                 # update the winning player
                 if self.updated_score == False:
                     player = self.round_winner()
+                    print(f"{player} won ")
                     if player != "draw":
+                        print("updated score")
                         self.update_score(player) 
                         self.updated_score = True 
                 
