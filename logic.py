@@ -47,12 +47,13 @@ class card_game_logic():
 
     def get_card_value(self,card):
         # card name must be formatted like the card image list 
-        face_cards = ["jack","king","queen"]
+
+        #https://en.wikipedia.org/wiki/List_of_poker_hands
+        face_cards = {"ace":14,"king":13,"queen":12,"jack":11}
+
         value = card.split("_")[0]
-        if value == "ace":
-            return 11
-        elif value in face_cards:
-            return 10
+        if value in face_cards:
+            return face_cards[value] 
         else:
             return int(value) 
     
