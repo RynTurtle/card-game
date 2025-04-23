@@ -3,9 +3,9 @@ from logic import card_game_logic
 
 
 # when shuffle and deal buttons are locked, use alternative image with grey instead of gold
+# add sounds
 class Button():
-    # image,position,size
-    # bug: when buttons overlap on different screens it will click them both, for now i will just avoid overlap 
+    # image,position,size either scaled or exact, provide the width and height for exact, provide just the scale for it to be scaled
     def __init__(self,screen,image_file,x,y,scale = None,width=0,height=0):
         self.screen = screen
 
@@ -124,14 +124,14 @@ class game_menu():
             for b in btns:
                 b.draw()
 
-
     def guide(self):
         x = self.display_w / 2 
         y = self.display_h 
         return_button = Button(self.screen,"ok.png",x,y - 150,1)
-        welcome = "Welcome to High Five!"
-        howtoplay = "Each player has five cards, After each player card is drawn a winner is determined, the player with the most wins after wins the game"
-        controls = "Click shuffle to randomise the player cards, click deal to distribute the cards then click on the cards to reveal their values"
+        welcome = self.font.render("Welcome to High Five!",True,(0,0,0))
+        message = self.font.render("Play VS friends, highest card wins a round, highest score of 5 rounds wins!",True,(0,0,0))
+        howtoplay = self.font.render("Click shuffle and deal, Click your card to reveal, press space to continue.",True,(0,0,0))
+        
         while True:
             # handle events 
             pygame.display.update()
@@ -142,8 +142,15 @@ class game_menu():
             if return_button.is_pressed():
                 return 
             
+
             self.screen.fill((0, 100, 0))
+            self.screen.blit(welcome,((self.display_w - welcome.get_width())  / 2,self.display_h / 2 - 150))
+            self.screen.blit(message,((self.display_w - message.get_width())  / 2,self.display_h / 2 - 100))
+            self.screen.blit(howtoplay,((self.display_w - howtoplay.get_width())  / 2,self.display_h / 2 - 50))
+
+            
             return_button.draw()
+
 
 
     def game_end(self,winner):
@@ -167,18 +174,14 @@ class game_menu():
 
             if y.is_pressed():
                 self.player_screen()
-                print("y")
 
             if n.is_pressed():
-                print("n")
                 return 
             
-            self.screen.fill((0, 100, 0))
-            pygame.draw.line(self.screen, "white", (self.display_w /2, 0), (self.display_w / 2, self.display_h), width=2)
-        
+            self.screen.fill((0, 100, 0))        
             y.draw()
-            self.screen.blit(restart,(0,self.display_h / 3))
-            self.screen.blit(congrats,(0,self.display_h / 3 - 50))
+            self.screen.blit(congrats,((self.display_w - congrats.get_width())  / 2,self.display_h / 3 - 50))
+            self.screen.blit(restart,((self.display_w - restart.get_width()) / 2,self.display_h / 3))
             n.draw() 
     
 
@@ -387,8 +390,6 @@ class card_game(card_game_logic):
             pygame.display.flip()
             # fps
             clock.tick(60)  
-
-        #pygame.quit()
 
 
 menu =  game_menu()
