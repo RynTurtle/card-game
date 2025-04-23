@@ -131,7 +131,8 @@ class game_menu():
         welcome = self.font.render("Welcome to High Five!",True,(0,0,0))
         message = self.font.render("Play VS friends, highest card wins a round, highest score of 5 rounds wins!",True,(0,0,0))
         howtoplay = self.font.render("Click shuffle and deal, Click your card to reveal, press space to continue.",True,(0,0,0))
-        
+        scores = self.font.render("Scores are determined by either their number or their face rank order (A,K,Q,J)",True,(0,0,0))
+
         while True:
             # handle events 
             pygame.display.update()
@@ -144,9 +145,10 @@ class game_menu():
             
 
             self.screen.fill((0, 100, 0))
-            self.screen.blit(welcome,((self.display_w - welcome.get_width())  / 2,self.display_h / 2 - 150))
-            self.screen.blit(message,((self.display_w - message.get_width())  / 2,self.display_h / 2 - 100))
-            self.screen.blit(howtoplay,((self.display_w - howtoplay.get_width())  / 2,self.display_h / 2 - 50))
+            self.screen.blit(welcome,((self.display_w - welcome.get_width())  / 2,self.display_h / 2 - 200))
+            self.screen.blit(message,((self.display_w - message.get_width())  / 2,self.display_h / 2 - 150))
+            self.screen.blit(howtoplay,((self.display_w - howtoplay.get_width())  / 2,self.display_h / 2 - 100))
+            self.screen.blit(scores,((self.display_w - scores.get_width())  / 2,self.display_h / 2 - 50))
 
             
             return_button.draw()
@@ -327,7 +329,7 @@ class card_game(card_game_logic):
     def draw(self):
         self.screen.fill((0, 100, 0))
         #draw white line in middle for reference 
-        pygame.draw.line(self.screen, "white", (self.display_w /2, 0), (self.display_w / 2, self.display_h), width=2)
+        #pygame.draw.line(self.screen, "white", (self.display_w /2, 0), (self.display_w / 2, self.display_h), width=2)
         self.card_outlines()
         self.place_dealer_stack()
         #self.test.draw()
