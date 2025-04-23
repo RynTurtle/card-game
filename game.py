@@ -119,7 +119,7 @@ class game_menu():
             self.screen.fill((0, 100, 0))
             #pygame.draw.line(self.screen, "white", (self.display_w /2, 0), (self.display_w / 2, self.display_h), width=2)
             text_image = self.big_font.render("How many players?",True,(0,0,0))
-            self.screen.blit(text_image,(self.display_w / 4.5,self.display_h / 5))
+            self.screen.blit(text_image,((self.display_w - text_image.get_width()) / 2,self.display_h / 5))
             # draw all the buttons 
             for b in btns:
                 b.draw()
