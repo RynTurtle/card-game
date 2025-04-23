@@ -21,7 +21,8 @@ class card_game_logic():
         self.player_hands = {}
         self.deck = [] 
         self.round = 1 
-
+    
+    # add a player and their deck + wins 
     def add_player(self,player_name):
         if len(self.player_hands.keys()) == 5:
             print("maximum player limit")
@@ -58,8 +59,8 @@ class card_game_logic():
             return int(value) 
     
 
+    # distribute 5 shuffled cards to each player 
     def deal_hands(self):
-        # distribute 5 cards to each player, one player at a time 
         for _ in range(5): 
             for players in self.player_hands:
                 if len(self.player_hands[players]["cards"]) < 5: 
@@ -78,6 +79,7 @@ class card_game_logic():
     def update_score(self,player):
         self.player_hands[player]["wins"] += 1 
 
+    # determines the round winner by comparing the players current hand 
     def round_winner(self):
         highest_card = 0  
         winner = ""
@@ -98,6 +100,7 @@ class card_game_logic():
                 return "draw"
         return winner
     
+    # calculate the winner of the entire game on their total wins 
     def game_winner(self):
 
         winner = ""
@@ -112,7 +115,7 @@ class card_game_logic():
                 return "draw"
         return winner
 
-    # remove the first card from the deck
+    # remove the first card from the deck 
     def handle_round(self):
         for player in self.player_hands:
             if self.player_hands[player]["cards"]:
@@ -122,20 +125,5 @@ class card_game_logic():
     def get_players(self):
         return list(self.player_hands.keys())
 
-"""game = card_game_logic()
-
-game.add_player("ryan")
-game.add_player("jeff")
-game.add_player("abc")
-game.add_player("def")
-game.add_player("ghi")
-game.add_player("ghi")
-
-game.shuffle_deck()
-game.deal_hands()
-for i in range(6):
-    print(game.check_winner())
-    game.handle_move()"""
-
-# check values of player cards, compare them, find winner 
-# add the 
+ 
+ 
