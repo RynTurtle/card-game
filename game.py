@@ -1,9 +1,15 @@
 import pygame 
 from logic import card_game_logic 
 
-
+#
 # when shuffle and deal buttons are locked, use alternative image with grey instead of gold
-# add sounds
+# add sounds: flip to reveal, winner sound? 
+# change the green to look like the main menu screen 
+# change text colour to pop out more, maybe change font size 
+# slap sound on game enter 
+# display what  the round is so 1/5 2/5 etc. 
+#
+
 class Button():
     # image,position,size either scaled or exact, provide the width and height for exact, provide just the scale for it to be scaled
     def __init__(self,screen,image_file,x,y,scale = None,width=0,height=0):
@@ -16,10 +22,8 @@ class Button():
             width = int(width * scale)
             height = int(height * scale)
         
-
         self.button_image = pygame.transform.smoothscale(self.button_image,(width,height)) # create the new button with the scaled width/height 
         self.rect = self.button_image.get_rect(center=(x,y)) # enclose image in rectangle, center it in the x,y coords
-       
         self.clicked = False # allow only one click being registered 
 
     def draw(self):
@@ -44,7 +48,6 @@ class Button():
 # main menu => players => game => game end => replay? Y => game; N => main menu 
 class game_menu():
     # to use multiple screens, add multiple game loops where they clear the screen 
-    
     def __init__(self):
         pygame.init()
         self.display_w = 1920
@@ -187,6 +190,7 @@ class game_menu():
             n.draw() 
     
 
+#                    playsound("./sounds/deal.wav")
 
 class card_game(card_game_logic):
     def __init__(self,players_chosen, screen,display_w,display_h):
@@ -194,6 +198,8 @@ class card_game(card_game_logic):
         self.screen = screen
         self.display_w = display_w
         self.display_h = display_h
+        #self.display_w = 1920
+        #self.display_h = 1080
         self.font = pygame.font.SysFont(None,24) # default font 
         self.card_height = 250
         self.card_width = 200 
@@ -226,6 +232,7 @@ class card_game(card_game_logic):
         self.updated_score = False 
         self.flipped = [False,False,False,False,False]
         self.continue_game = True   # player has no cards in their hand or they chose to exit 
+        
         self.shuffle_button = Button(self.screen,"shuffle.png",self.display_w / 2, self.card_height + 125,0.5)
         self.deal_button = Button(self.screen, "deal.png",self.display_w / 2,self.card_height  + 180 ,0.5) 
         
@@ -239,8 +246,9 @@ class card_game(card_game_logic):
         self.right2_button = Button(self.screen,"card-back.png",self.right2[0] + center_w,self.right2[1] + center_h, width=self.card_width,height=self.card_height)
         self.card_buttons =  [self.left2_button,self.left_button,self.mid_button,self.right_button,self.right2_button]
         #print(f"new x:{t} y{t2}")
-
-
+        self.already_flipped = [] 
+        self.deal_sound = pygame.mixer.Sound("./audio/deal.wav")
+        
         for i in range(players_chosen):
             self.add_player(f"player {i+1}")
         self.guide = Button(self.screen,"guide.png",100,40,0.7)
@@ -306,6 +314,7 @@ class card_game(card_game_logic):
             game_menu().guide()
 
 
+
     def flip_card(self):
         for i,value in enumerate(self.flipped): 
             if i < len(self.get_players()): # if the card has a player allocated
@@ -315,7 +324,11 @@ class card_game(card_game_logic):
                     card = pygame.image.load(f'./images/cards/{players_card}.png')
                     card = pygame.transform.scale(card, (self.card_width,self.card_height ))
                     self.screen.blit(card,(self.positions[i][0],self.positions[i][1]))
-    
+                    
+                    if players_card not in self.already_flipped:
+                        self.deal_sound.play()
+                        self.already_flipped.append(players_card)
+
 
     def write_players(self):
         for i,value in enumerate(self.flipped): 
