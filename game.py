@@ -5,7 +5,6 @@ from logic import card_game_logic
 # when shuffle and deal buttons are locked, use alternative image with grey instead of gold
 # add sounds: flip to reveal, winner sound? 
 # change the green to look like the main menu screen 
-# change text colour to pop out more, maybe change font size 
 # slap sound on game enter 
 # display what  the round is so 1/5 2/5 etc. 
 #
@@ -31,12 +30,15 @@ class Button():
         # if its hovered over then draw a highlight or something over the button 
         self.screen.blit(self.button_image,self.rect)
 
-    def is_pressed(self):
+    def is_pressed(self,playsound=True):
+
         position = pygame.mouse.get_pos()
         pressed = pygame.mouse.get_pressed()[0] # bool 
         if self.rect.collidepoint(position): # if the mouse is in the area of the rectangle button 
             if pressed and not self.clicked:
                 self.clicked = True 
+                if playsound:
+                    pygame.mixer.Sound("./audio/click.wav").play()
                 return True
             
         if not pressed:
@@ -60,7 +62,7 @@ class game_menu():
         self.main_menu_image = pygame.image.load(f"./images/main-menu.png")
         self.main_menu_image = pygame.transform.smoothscale(self.main_menu_image,(self.display_w,self.display_h)) # resize image to fit display
         self.big_font = pygame.font.SysFont(None,200)  
-        self.font = pygame.font.SysFont(None,60)  
+        self.font = pygame.font.SysFont(None,60)        
 
 
     def main_menu(self):
@@ -70,7 +72,9 @@ class game_menu():
 
         start_button = Button(self.screen,"start.png",x,y,1)
         guide = Button(self.screen,"guide.png",x,y + 150,1)
-
+        # play high five sound effect 
+        pygame.mixer.Sound("./audio/slap.mp3").play()
+        
         while True:
             # handle events 
             pygame.display.update()
@@ -88,8 +92,6 @@ class game_menu():
             self.screen.blit(self.main_menu_image,(0,0))
             start_button.draw()
             guide.draw()
-            #if controls.is_pressed():
-            #    print("controls has been clicked")
 
 
     def player_screen(self):
@@ -119,7 +121,7 @@ class game_menu():
                     card_game(self.players_chosen,self.screen,self.display_w,self.display_h).game_loop()
                     return  # go back to the main menu when card game is exited
         
-            self.screen.fill((0, 100, 0))
+            self.screen.fill((11, 116, 36))
             #pygame.draw.line(self.screen, "white", (self.display_w /2, 0), (self.display_w / 2, self.display_h), width=2)
             text_image = self.big_font.render("How many players?",True,(0,0,0))
             self.screen.blit(text_image,((self.display_w - text_image.get_width()) / 2,self.display_h / 5))
@@ -147,7 +149,7 @@ class game_menu():
                 return 
             
 
-            self.screen.fill((0, 100, 0))
+            self.screen.fill((11, 116, 36))
             self.screen.blit(welcome,((self.display_w - welcome.get_width())  / 2,self.display_h / 2 - 200))
             self.screen.blit(message,((self.display_w - message.get_width())  / 2,self.display_h / 2 - 150))
             self.screen.blit(howtoplay,((self.display_w - howtoplay.get_width())  / 2,self.display_h / 2 - 100))
@@ -183,14 +185,13 @@ class game_menu():
             if n.is_pressed():
                 return 
             
-            self.screen.fill((0, 100, 0))        
+            self.screen.fill((11, 116, 36))
             y.draw()
             self.screen.blit(congrats,((self.display_w - congrats.get_width())  / 2,self.display_h / 3 - 50))
             self.screen.blit(restart,((self.display_w - restart.get_width()) / 2,self.display_h / 3))
             n.draw() 
     
 
-#                    playsound("./sounds/deal.wav")
 
 class card_game(card_game_logic):
     def __init__(self,players_chosen, screen,display_w,display_h):
@@ -247,11 +248,10 @@ class card_game(card_game_logic):
         self.card_buttons =  [self.left2_button,self.left_button,self.mid_button,self.right_button,self.right2_button]
         #print(f"new x:{t} y{t2}")
         self.already_flipped = [] 
-        self.deal_sound = pygame.mixer.Sound("./audio/deal.wav")
-        
+
         for i in range(players_chosen):
             self.add_player(f"player {i+1}")
-        self.guide = Button(self.screen,"guide.png",100,40,0.7)
+        self.guide_button = Button(self.screen,"guide.png",100,40,0.7)
 
     def card_outlines(self):
         #x,y,width,height,line width
@@ -293,24 +293,23 @@ class card_game(card_game_logic):
             
     def handle_buttons(self):
         for i,buttons in enumerate(self.card_buttons):
-            if buttons.is_pressed() and self.deal_cards:
+            if buttons.is_pressed(playsound=False) and self.deal_cards:
                 # only flip cards if they are dealt
                 self.flipped[i] = True  
 
 
         # deal cards when the button is pressed and when the cards have been shuffled 
         if self.deal_button.is_pressed() and len(self.deck) != 0:
-            print("deal")
             # now the dealer will move the cards facedown for the player to flip  
             self.deal_cards = True  
 
         # shuffling can only be done when the game starts 
-        if self.shuffle_button.is_pressed() and self.deal_cards == False and self.round == 1:
-            print("shuffle")
+        if self.shuffle_button.is_pressed(playsound=False) and self.deal_cards == False and self.round == 1:
+            pygame.mixer.Sound("./audio/shuffle.wav").play()
             self.shuffle_deck()
             self.deal_hands() # deal the shuffled hands  
 
-        if self.guide.is_pressed():
+        if self.guide_button.is_pressed():
             game_menu().guide()
 
 
@@ -326,7 +325,7 @@ class card_game(card_game_logic):
                     self.screen.blit(card,(self.positions[i][0],self.positions[i][1]))
                     
                     if players_card not in self.already_flipped:
-                        self.deal_sound.play()
+                        pygame.mixer.Sound("./audio/deal.wav").play()
                         self.already_flipped.append(players_card)
 
 
@@ -340,13 +339,13 @@ class card_game(card_game_logic):
 
 
     def draw(self):
-        self.screen.fill((0, 100, 0))
+        self.screen.fill((11, 116, 36))
         #draw white line in middle for reference 
         #pygame.draw.line(self.screen, "white", (self.display_w /2, 0), (self.display_w / 2, self.display_h), width=2)
         self.card_outlines()
         self.place_dealer_stack()
         #self.test.draw()
-        self.guide.draw()
+        self.guide_button.draw()
         self.shuffle_button.draw()
         self.deal_button.draw()
         if self.deal_cards:
