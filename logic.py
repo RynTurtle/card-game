@@ -102,11 +102,10 @@ class card_game_logic():
     
     # calculate the winner of the entire game on their total wins 
     def game_winner(self):
-
         winner = ""
         amount = 0
         for players in self.player_hands:    
-            print(f"{players} {self.player_hands[players]["wins"]}")
+            #print(f"{players} {self.player_hands[players]["wins"]}")
             if  self.player_hands[players]["wins"] > amount:
                 amount = self.player_hands[players]["wins"]
                 winner = players    

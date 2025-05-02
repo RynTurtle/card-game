@@ -1,13 +1,7 @@
 import pygame 
 from logic import card_game_logic 
 
-#
 # when shuffle and deal buttons are locked, use alternative image with grey instead of gold
-# add sounds: flip to reveal, winner sound? 
-# change the green to look like the main menu screen 
-# slap sound on game enter 
-# display what  the round is so 1/5 2/5 etc. 
-#
 
 class Button():
     # image,position,size either scaled or exact, provide the width and height for exact, provide just the scale for it to be scaled
@@ -52,12 +46,12 @@ class game_menu():
     # to use multiple screens, add multiple game loops where they clear the screen 
     def __init__(self):
         pygame.init()
-        self.display_w = 1920
-        self.display_h = 1080
+        #self.display_w = 1920
+        #self.display_h = 1080
         #fullscreen
         display_info = pygame.display.Info()
-        #self.display_w = display_info.current_w
-        #self.display_h = display_info.current_h
+        self.display_w = display_info.current_w
+        self.display_h = display_info.current_h 
         self.screen = pygame.display.set_mode((self.display_w,self.display_h))
         self.main_menu_image = pygame.image.load(f"./images/main-menu.png")
         self.main_menu_image = pygame.transform.smoothscale(self.main_menu_image,(self.display_w,self.display_h)) # resize image to fit display
@@ -201,7 +195,7 @@ class card_game(card_game_logic):
         self.display_h = display_h
         #self.display_w = 1920
         #self.display_h = 1080
-        self.font = pygame.font.SysFont(None,24) # default font 
+        self.font = pygame.font.SysFont(None,30) # default font 
         self.card_height = 250
         self.card_width = 200 
         self.padding = 50        
@@ -344,7 +338,7 @@ class card_game(card_game_logic):
         #pygame.draw.line(self.screen, "white", (self.display_w /2, 0), (self.display_w / 2, self.display_h), width=2)
         self.card_outlines()
         self.place_dealer_stack()
-        #self.test.draw()
+        self.write_text(f"Round: {self.round}/5", self.display_w / 2 - 50,50)
         self.guide_button.draw()
         self.shuffle_button.draw()
         self.deal_button.draw()
@@ -380,8 +374,7 @@ class card_game(card_game_logic):
             self.draw()
 
             # if the player cards have been flipped, alert the user to press space to continue and update the score only once 
-            if self.flipped.count(True) >= len(self.get_players()): 
-                #print("player cards flipped")
+            if self.flipped.count(True) >= len(self.get_players()):    
                 # update the winning player
                 if self.updated_score == False:
                     player = self.round_winner()
