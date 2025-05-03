@@ -200,69 +200,69 @@ class card_game(card_game_logic):
         self.card_width = 200 
         self.padding = 50        
         self.dealer = pygame.Vector2((self.display_w / 2) - (self.card_width / 2), 100) 
-        
-        self.positions = []
-        # 5 cards, padding inbetween these cards 
-        total_width = self.card_width * 5 + self.padding * 4
-        #  get the amount of space left after placing cards, divide it equally in half so you can get the starts spacing 
-        start_x = (self.display_w - total_width) / 2
-        # height is the card height + padding 
-
-        y = self.display_h - (self.card_height + self.padding)
-        for i in range(5):
-            # calculate next card by starting far left, then add the card # and * by the cards and their padding 
-            x = start_x + i * (self.card_width + self.padding)
-            self.positions.append(pygame.Vector2(x,y))
-        #pygame draws these objects from the top left corner 
-        self.left2 = self.positions[0]
-        self.left = self.positions[1]
-        self.mid = self.positions[2]
-        self.right = self.positions[3]
-        self.right2 = self.positions[4]
- 
         self.card_back = pygame.image.load('./images/card-back.png')
         self.card_back = pygame.transform.scale(self.card_back, (self.card_width,self.card_height ))
 
         self.deal_cards = False
         self.updated_score = False 
         self.flipped = [False,False,False,False,False]
+        self.already_flipped = [] # what has been flipped  
+
         self.continue_game = True   # player has no cards in their hand or they chose to exit 
         
         self.shuffle_button = Button(self.screen,"shuffle.png",self.display_w / 2, self.card_height + 125,0.5)
         self.shuffle_button_locked = Button(self.screen,"shuffle-locked.png",self.display_w / 2, self.card_height + 125,0.5)
-
         self.deal_button = Button(self.screen, "deal.png",self.display_w / 2,self.card_height  + 180 ,0.5) 
-        
+        self.guide_button = Button(self.screen,"guide.png",100,40,0.7)
+        self.card_buttons = []
+
         # need to pass the buttons a center instead of top left, to do this add the half of the card its missing 
         center_h = self.card_height / 2
         center_w = self.card_width / 2  
-        self.left2_button = Button(self.screen,"card-back.png",self.left2[0] + center_w,self.left2[1] + center_h, width=self.card_width,height=self.card_height)
-        self.left_button = Button(self.screen,"card-back.png",self.left[0] + center_w,self.left[1] + center_h, width=self.card_width,height=self.card_height)
-        self.mid_button = Button(self.screen,"card-back.png",self.mid[0] + center_w,self.mid[1] + center_h, width=self.card_width,height=self.card_height)
-        self.right_button = Button(self.screen,"card-back.png",self.right[0] + center_w,self.right[1] + center_h, width=self.card_width,height=self.card_height)
-        self.right2_button = Button(self.screen,"card-back.png",self.right2[0] + center_w,self.right2[1] + center_h, width=self.card_width,height=self.card_height)
-        self.card_buttons =  [self.left2_button,self.left_button,self.mid_button,self.right_button,self.right2_button]
-        #print(f"new x:{t} y{t2}")
-        self.already_flipped = [] 
+        # 5 cards, padding inbetween these cards 
+        total_width = self.card_width * 5 + self.padding * 4
+        #  get the amount of space left after placing cards, divide it equally in half so you can get the starts spacing 
+        start_x = (self.display_w - total_width) / 2
+        # height is the card height + padding 
 
+        self.positions = []
+        y = self.display_h - (self.card_height + self.padding)
+        for i in range(5):
+            # calculate next card by starting far left, then add the card # and * by the cards and their padding 
+            x = start_x + i * (self.card_width + self.padding)
+
+            # place the buttons where they should be placed with the default card back image 
+            btn = Button(self.screen,"card-back.png",x + center_w,y + center_h, width=self.card_width,height=self.card_height)
+            self.card_buttons.append(btn)
+            self.positions.append((x,y))
+        
+
+        # add the players chosen by the menu 
         for i in range(players_chosen):
             self.add_player(f"player {i+1}")
-        self.guide_button = Button(self.screen,"guide.png",100,40,0.7)
 
     def card_outlines(self):
         #x,y,width,height,line width
+        #pygame draws these objects from the top left corner 
+        left2 = self.positions[0]
+        left = self.positions[1]
+        mid = self.positions[2]
+        right = self.positions[3]
+        right2 = self.positions[4]
+ 
+
         # dealer rectangle
         pygame.draw.rect(self.screen, "gold", pygame.Rect(self.dealer[0],self.dealer[1], self.card_width, self.card_height), width=5) 
         # place a card in the middle of the screen, the height is the screens size - the card height with padding added
-        pygame.draw.rect(self.screen, "gold", pygame.Rect(self.mid[0],self.mid[1], self.card_width, self.card_height), width=5) 
+        pygame.draw.rect(self.screen, "gold", pygame.Rect(mid[0],mid[1], self.card_width, self.card_height), width=5) 
         
         # right of the middle 
-        pygame.draw.rect(self.screen, "gold", pygame.Rect(self.right[0],self.right[1], self.card_width, self.card_height), width=5) 
-        pygame.draw.rect(self.screen, "gold", pygame.Rect(self.right2[0],self.right2[1], self.card_width,self.card_height), width=5) 
+        pygame.draw.rect(self.screen, "gold", pygame.Rect(right[0],right[1], self.card_width, self.card_height), width=5) 
+        pygame.draw.rect(self.screen, "gold", pygame.Rect(right2[0],right2[1], self.card_width,self.card_height), width=5) 
 
         # left of the middle 
-        pygame.draw.rect(self.screen, "gold", pygame.Rect(self.left[0],self.left[1], self.card_width, self.card_height), width=5) 
-        pygame.draw.rect(self.screen, "gold", pygame.Rect(self.left2[0],self.left2[1],self.card_width, self.card_height), width=5) 
+        pygame.draw.rect(self.screen, "gold", pygame.Rect(left[0],left[1], self.card_width, self.card_height), width=5) 
+        pygame.draw.rect(self.screen, "gold", pygame.Rect(left2[0],left2[1],self.card_width, self.card_height), width=5) 
 
 
 
