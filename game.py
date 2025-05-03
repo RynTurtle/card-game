@@ -229,6 +229,8 @@ class card_game(card_game_logic):
         self.continue_game = True   # player has no cards in their hand or they chose to exit 
         
         self.shuffle_button = Button(self.screen,"shuffle.png",self.display_w / 2, self.card_height + 125,0.5)
+        self.shuffle_button_locked = Button(self.screen,"shuffle-locked.png",self.display_w / 2, self.card_height + 125,0.5)
+
         self.deal_button = Button(self.screen, "deal.png",self.display_w / 2,self.card_height  + 180 ,0.5) 
         
         # need to pass the buttons a center instead of top left, to do this add the half of the card its missing 
@@ -340,7 +342,12 @@ class card_game(card_game_logic):
         self.place_dealer_stack()
         self.write_text(f"Round: {self.round}/5", self.display_w / 2 - 50,50)
         self.guide_button.draw()
-        self.shuffle_button.draw()
+
+        if self.round ==1:
+            self.shuffle_button.draw()
+        else:
+            self.shuffle_button_locked.draw()
+
         self.deal_button.draw()
         if self.deal_cards:
             # place the buttons underneath the cards 
