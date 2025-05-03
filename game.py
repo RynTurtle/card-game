@@ -164,7 +164,7 @@ class game_menu():
             message = f"Congratulations {winner}, you have won!!!"
 
         congrats = self.font.render(message,True,(0,0,0))
-        restart = self.font.render("Would you like to restart?",True,(0,0,0))
+        restart = self.font.render("Would you like to play again?",True,(0,0,0))
 
         while True:
             # handle events 
